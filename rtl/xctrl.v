@@ -124,22 +124,22 @@ module xctrl (
 	`BEQI: begin
 	   regA_nxt = regA - `DATA_W'd1;
 	   if ( regA == `DATA_W'd0 )
-	     pc_nxt = imm[`PROG_ADDR_W:0];
+	     pc_nxt = imm[`PROG_ADDR_W-1:0];
 	end
 	`BEQ: begin
 	   regA_nxt = regA - `DATA_W'd1;
 	   if ( regA == `DATA_W'd0 )
-	     pc_nxt = regB[`PROG_ADDR_W:0];
+	     pc_nxt = regB[`PROG_ADDR_W-1:0];
 	end
 	`BNEQI: begin
 	   regA_nxt = regA - `DATA_W'd1;
 	   if ( regA != `DATA_W'd0 )
-	     pc_nxt = imm[`PROG_ADDR_W:0];
+	     pc_nxt = imm[`PROG_ADDR_W-1:0];
 	end
 	`BNEQ: begin
 	   regA_nxt = regA - `DATA_W'd1;
 	   if ( regA != `DATA_W'd0 )
-	     pc_nxt = regB[`PROG_ADDR_W:0];
+	     pc_nxt = regB[`PROG_ADDR_W-1:0];
 	end
 	`LDI: begin
 	   regA_nxt = imm;
@@ -224,7 +224,7 @@ module xctrl (
 	end
 	`RDWB: begin
 	   data_sel  = (addrint >= `REGF_BASE);
-	   data_addr = addr_from_regB + imm;
+	   data_addr = addr_from_regB[`PROG_ADDR_W-1:0] + imm[`PROG_ADDR_W-1:0];
 	end
 	`WRW: begin
 	   data_sel  = (addrint >= `REGF_BASE);
@@ -233,7 +233,7 @@ module xctrl (
 	`WRWB: begin
 	   data_sel  = (addrint >= `REGF_BASE);
 	   data_we = 1'b1;
-	   data_addr = addr_from_regB + imm;
+	   data_addr = addr_from_regB[`PROG_ADDR_W-1:0] + imm[`PROG_ADDR_W-1:0];
 	end
 	default:
 	     data_we  = 1'b0;
