@@ -124,7 +124,7 @@ module xctrl (
 	`BEQI: begin
 	   regA_nxt = regA - `DATA_W'd1;
 	   if ( regA == `DATA_W'd0 )
-	     pc_nxt = pc + imm[`PROG_ADDR_W:0];
+	     pc_nxt = imm[`PROG_ADDR_W:0];
 	end
 	`BEQ: begin
 	   regA_nxt = regA - `DATA_W'd1;
@@ -134,7 +134,7 @@ module xctrl (
 	`BNEQI: begin
 	   regA_nxt = regA - `DATA_W'd1;
 	   if ( regA != `DATA_W'd0 )
-	     pc_nxt = pc + imm[`PROG_ADDR_W:0];
+	     pc_nxt = imm[`PROG_ADDR_W:0];
 	end
 	`BNEQ: begin
 	   regA_nxt = regA - `DATA_W'd1;

@@ -65,7 +65,7 @@ def assemble (flds, pReg) :
     if opval == None : raise vaError(1)
     if len(flds) == 1 or flds[0]=="nop" : return opval*16**(lookup.get("INSTR_W")/4-1)
     if len(parts) == 1 and (flds[0]=="beqi" or flds[0]=="bneqi") :
-        imm = getVal(parts[0]) - pReg - lookup.get("DELAY_SLOTS")
+        imm = getVal(parts[0])
         if (imm > 2**(lookup.get("IMM_W")-1)-1) or (imm < -2**(lookup.get("IMM_W")-1)) : raise vaError(2)
         if imm < 0 : imm = 2**lookup.get("IMM_W") + imm
         return opval*16**(lookup.get("INSTR_W")/4-1) + imm
