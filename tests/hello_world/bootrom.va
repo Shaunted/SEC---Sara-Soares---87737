@@ -9,8 +9,7 @@ start	ldi 0
 
 #wait for R0 to become non-zero and then jumps to user program
 wait0	rdw R0
-	beqi wait0 #regA is decremented
-	addi 1 #regA is incremented to restore
+	beqi wait0
+        nop
 	bneqi PROG_RAM
-	nop
 	nop

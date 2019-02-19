@@ -94,7 +94,7 @@ module xdict;
       $fwrite(fp, "\"PROG_RAM\":%d,\n", `PROG_RAM);
       $fwrite(fp, "\"PROG_RAM_ADDR_W\":%d,\n", `PROG_RAM_ADDR_W);
       // used as data memory
-      $fwrite(fp, "\"PROG_BASE\":%d,\n", `PROG_BASE); 
+      $fwrite(fp, "\"MEM_BASE\":%d,\n", `MEM_BASE); 
 
       // Char print module
       $fwrite(fp, "\"CPRT_BASE\":%d,\n", `CPRT_BASE);

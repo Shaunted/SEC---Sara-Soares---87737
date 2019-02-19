@@ -37,7 +37,7 @@ module xtop (
    wire [`DATA_W-1:0] 		  data_to_wr;
 
    // MODULE SELECTION SIGNALS
-   reg 				  prog_sel;
+   reg 				  mem_sel;
    wire [`DATA_W-1:0] 		  prog_data_to_rd;
    
    reg 				  regf_sel;
@@ -74,12 +74,12 @@ module xtop (
 		     .data_to_wr(data_to_wr)
 		     );
 
-   // PROGRAM MEMORY MODULE
+   // MEMORY MODULE
    xprog prog (
 	       .clk(clk),
 
 	       //data interface 
-	       .data_sel(prog_sel),
+	       .data_sel(mem_sel),
 	       .data_we(data_we),
 	       .data_addr(data_addr[`PROG_RAM_ADDR_W-1:0]),
 	       .data_in(data_to_wr),
@@ -102,7 +102,7 @@ module xtop (
 
    // ADDRESS DECODER
    always @ * begin
-      prog_sel = 1'b0;
+      mem_sel = 1'b0;
       regf_sel = 1'b0;
 `ifdef DEBUG
       cprt_sel = 1'b0;
@@ -118,7 +118,7 @@ module xtop (
 	 cprt_sel = data_sel;
  `endif
      else if (`PROG_BASE == (data_addr & ({`ADDR_W{1'b1}}<<`PROG_ADDR_W))) begin
-         prog_sel = 1'b1;
+         mem_sel = data_sel;
          data_to_rd = prog_data_to_rd;
      end
 `ifdef DEBUG	
