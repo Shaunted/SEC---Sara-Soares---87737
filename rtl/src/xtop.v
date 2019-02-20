@@ -117,7 +117,7 @@ module xtop (
       else if (`CPRT_BASE == data_addr)
 	 cprt_sel = data_sel;
  `endif
-     else if (`PROG_BASE == (data_addr & ({`ADDR_W{1'b1}}<<`PROG_ADDR_W))) begin
+     else if (`MEM_BASE == (data_addr & ({`ADDR_W{1'b1}}<<`PROG_ADDR_W))) begin
          mem_sel = data_sel;
          data_to_rd = prog_data_to_rd;
      end
