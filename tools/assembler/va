@@ -9,9 +9,6 @@ from math import ceil
 
 import os.path
 
-src_path = "../../versat/verilog_src/"
-src_path_asic = "../../../versat/asic_umc130nm/sim/"
-
 outfilename_list = ["program.hex","bootrom.hex"]
 
 class vaError(Exception):
@@ -19,7 +16,6 @@ class vaError(Exception):
         self.value = value
     def __str__(self):
         return repr(self.value)
-
 
 lookup={}
 
@@ -135,12 +131,8 @@ def pass2 (program, pReg, outfilename) :
 def main () :
     global lookup
     
-    if os.path.isfile('xdict.txt'):
-        with open('xdict.txt','r') as inf:
-            lookup = eval(inf.read())
-    else:
-        with open(src_path + 'xdict.txt','r') as inf:
-            lookup = eval(inf.read())
+    with open('xdict.json','r') as inf:
+        lookup = eval(inf.read())
     
     # assume it is a main program for RAM
     pReg = lookup.get("PROG_RAM")

@@ -1,28 +1,25 @@
 # PATHS
-VA_DIR := ../../tools/assembler
+VA := ../../tools/assembler/va
+RTL_DIR := ../../rtl/src
 
 all: bootrom.hex program.hex
-	make -C ../../rtl xtop
 
 # build symbol dictionary
 xdict.json: 
-	make -C ../../rtl xdict
-	cp ../../rtl/xdict.txt .
+	make -C $(RTL_DIR) xdict.json
+	mv $(RTL_DIR)/xdict.json .
 
-# compile bootrom
-bootrom.hex: bootrom.va xdict.txt
-	$(VA_DIR)/va -b < $(test).va
+# assemble bootrom
+bootrom.hex: bootrom.va xdict.json
+	$(VA) -b < bootrom.va
+	mv $@ $(RTL_DIR)
 
-
-# compile 
-program.hex: program.va xdict.txt
-	../../tools/va < program.va
-	cp $@ ../../rtl
-	cp $@ ../../rtl 
+# assemble program
+program.hex: program.va xdict.json
+	$(VA) < program.va
+	mv $@ $(RTL_DIR)
 
 clean:
-	make -C ../../rtl clean
-	@rm -f  xdict.txt *# *~ *.hex rom.v
-
+	@rm -f xdict.json *# *~ rom.v
 
 .phony: all clean
