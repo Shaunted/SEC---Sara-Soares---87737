@@ -31,10 +31,6 @@ $(HEX):$(XDEFS) $(XDICT)
 	make -C $(TESTS_DIR)/$(test) $(testparams)
 	mv $(TESTS_DIR)/$(test)/*.hex .
 
-xdict.json: $(XDEFS) $(SRC_DIR)/xdict.v
-	$(VC) $(CFLAGS) -o xdict.out $(SRC_DIR)/xdict.v
-	./xdict.out
-
 # CLEANUP, ETC
 clean: 	
 	make -C $(TESTS_DIR)/$(test) clean
