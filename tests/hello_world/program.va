@@ -9,8 +9,11 @@
 	wrw R1
 	
 # set RB to point to first char
-#	ldi PROG_BASE
-	ldi c0
+        ldi PROG_RAM
+        wrw R4
+	ldi MEM_BASE
+	addi c0
+        sub R4
 	wrw RB
 
 loop 	rdwb

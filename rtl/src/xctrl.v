@@ -223,17 +223,17 @@ module xctrl (
 	   data_sel  = (addrint >= `REGF_BASE);
 	end
 	`RDWB: begin
-	   data_sel  = (addrint >= `REGF_BASE);
-	   data_addr = addr_from_regB[`PROG_ADDR_W-1:0] + imm[`PROG_ADDR_W-1:0];
+	   data_sel  = (regB >= `REGF_BASE);
+	   data_addr = addr_from_regB + imm[`PROG_ADDR_W-1:0];
 	end
 	`WRW: begin
 	   data_sel  = (addrint >= `REGF_BASE);
 	   data_we  = 1'b1;
 	end
 	`WRWB: begin
-	   data_sel  = (addrint >= `REGF_BASE);
+	   data_sel  = (regB >= `REGF_BASE);
 	   data_we = 1'b1;
-	   data_addr = addr_from_regB[`PROG_ADDR_W-1:0] + imm[`PROG_ADDR_W-1:0];
+	   data_addr = addr_from_regB + imm[`PROG_ADDR_W-1:0];
 	end
 	default:
 	     data_we  = 1'b0;
