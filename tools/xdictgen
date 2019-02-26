@@ -1,0 +1,155 @@
+#!/usr/bin/python
+#Description: generates a dictionary of symbols for the assembler
+
+
+def search(string):
+    f.seek(0)
+    for line in f:
+        values = line.split(" ")
+        if "`define" == values[0]:
+            if string == values[1]:
+                return int(values[2])
+
+def search_hexa(string):
+    f.seek(0)
+    for line in f:
+        values = line.split(" ")
+        if "`define" == values[0]:
+            if string == values[1]:
+                values = line.split("'h")
+                values = values[1].split(" ")
+                return int(values[0],16)
+
+def search_dec(string):
+    f.seek(0)
+    for line in f:
+        values = line.split(" ")
+        if "`define" == values[0]:
+            if string == values[1]:
+                values = line.split("'d")
+                return int(values[1])
+
+xdict = open("xdict.json", "w")
+xdict.write('{\n')
+
+#CONTROLLER
+
+f = open("../../rtl/include/xctrldefs.vh", "r")
+
+#immediate width
+val = search('INSTR_W') - search('OPCODESZ')
+xdict.write('\"IMM_W\":' + str(val) + ',\n')
+
+#delay slots
+val=search('DELAY_SLOTS')
+xdict.write('\"DELAY_SLOTS\":' + str(val) + ',\n')
+
+#instruction codes
+val=search_hexa('SHFT')
+xdict.write('\"shft\":' + str(val) + ',\n')
+val=search_hexa('ADD')
+xdict.write('\"add\":' + str(val) + ',\n')
+val=search_hexa('ADDI')
+xdict.write('\"addi\":' + str(val) + ',\n')
+val=search_hexa('AND')
+xdict.write('\"and\":' + str(val) + ',\n')
+val=search_hexa('XOR')
+xdict.write('\"xor\":' + str(val) + ',\n')
+val=search_hexa('LDI')
+xdict.write('\"ldi\":' + str(val) + ',\n')
+val=search_hexa('LDIH')
+xdict.write('\"ldih\":' + str(val) + ',\n')
+val=search_hexa('RDW')
+xdict.write('\"rdw\":' + str(val) + ',\n')
+val=search_hexa('WRW')
+xdict.write('\"wrw\":' + str(val) + ',\n')
+val=search_hexa('RDWB')
+xdict.write('\"rdwb\":' + str(val) + ',\n')
+val=search_hexa('WRWB')
+xdict.write('\"wrwb":' + str(val) + ',\n')
+val=search_hexa('BEQI')
+xdict.write('\"beqi\":' + str(val) + ',\n')
+val=search_hexa('BEQ')
+xdict.write('\"beq\":' + str(val) + ',\n')
+val=search_hexa('BNEQI')
+xdict.write('\"bneqi\":' + str(val) + ',\n')
+val=search_hexa('BNEQ')
+xdict.write('\"bneq\":' + str(val) + ',\n')
+
+#aliases
+val=search_hexa('ADDI')
+xdict.write('\"nop\":' + str(val) + ',\n')
+val=search_hexa('WRW')
+xdict.write('\"wrc\":' + str(val) + ',\n')
+
+#PROG
+val=search('INSTR_W')
+xdict.write('\"INSTR_W":' + str(val) + ',\n')
+
+f.close() #close xctrldefs.vh
+f = open("../../rtl/include/xprogdefs.vh", "r")
+
+val=search('PROG_ADDR_W')
+xdict.write('\"PROG_ADDR_W\":' + str(val) + ',\n')
+
+f.close() #close xprogdefs.vh
+
+#MEMORY MAP
+
+#Controller
+f = open("../../rtl/include/xctrldefs.vh", "r")
+
+val=search_dec('RB')
+xdict.write('\"RB\":' + str(val) + ',\n')
+val=search_dec('RC')
+xdict.write('\"RC\":' + str(val) + ',\n')
+f.close() #close xctrldefs.vh
+
+#Registers (defined by REGF_BASE in xdefs.vh)
+
+f = open("../../rtl/include/xdefs.vh")
+val=search_hexa('REGF_BASE')
+xdict.write('\"R0\":' + str(val) + ',\n')
+xdict.write('\"R1\":' + str(val+1) + ',\n')
+xdict.write('\"R2\":' + str(val+2) + ',\n')
+xdict.write('\"R3\":' + str(val+3) + ',\n')
+xdict.write('\"R4\":' + str(val+4) + ',\n')
+xdict.write('\"R5\":' + str(val+5) + ',\n')
+xdict.write('\"R6\":' + str(val+6) + ',\n')
+xdict.write('\"R7\":' + str(val+7) + ',\n')
+xdict.write('\"R8\":' + str(val+8) + ',\n')
+xdict.write('\"R9\":' + str(val+9) + ',\n')
+xdict.write('\"R10\":' + str(val+10) + ',\n')
+xdict.write('\"R11\":' + str(val+11) + ',\n')
+xdict.write('\"R12\":' + str(val+12) + ',\n')
+xdict.write('\"R13\":' + str(val+13) + ',\n')
+xdict.write('\"R14\":' + str(val+14) + ',\n')
+xdict.write('\"R15\":' + str(val+15) + ',\n')
+f.close() #close xdefs.vh
+
+#Program memory
+f = open("../../rtl/include/xprogdefs.vh")
+val=search_hexa('PROG_ROM')
+xdict.write('\"PROG_ROM\":' + str(val) + ',\n')
+val=search('PROG_ROM_ADDR_W')
+xdict.write('\"PROG_ROM_ADDR_W\":' + str(val) + ',\n')
+val=search_hexa('PROG_RAM')
+xdict.write('\"PROG_RAM\":' + str(val) + ',\n')
+val=search('PROG_RAM_ADDR_W')
+xdict.write('\"PROG_RAM_ADDR_W\":' + str(val) + ',\n')
+f.close() #close xprogdefs.vh
+
+#used as data memory
+f = open("../../rtl/include/xdefs.vh")
+val=search_hexa('MEM_BASE')
+xdict.write('\"MEM_BASE\":' + str(val) + ',\n')
+
+#Char print module
+val=search_hexa('CPRT_BASE')
+xdict.write('\"CPRT_BASE\":' + str(val) + ',\n')
+f.close() #close xdefs.vh
+
+#Finish writing dictionary
+xdict.write('}\n')
+
+xdict.close() #close xdict
