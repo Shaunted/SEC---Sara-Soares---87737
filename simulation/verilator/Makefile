@@ -1,11 +1,11 @@
 SRC_DIR := ../../rtl/src
-INCLUDE_DIR :=/home/jratinho/sandbox/picoversat/rtl/include
+INCLUDE_DIR := ../../rtl/include
 XDEFS := $(wildcard $(INCLUDE_DIR)/*.vh)
 HEX :=  bootrom.hex program.hex
 TESTS_DIR := ../../tests
 
 VC = verilator
-CFLAGS = -Wall --cc -Wno-UNUSED --trace
+CFLAGS = -Wall --cc -Wno-UNUSED --trace -DDEBUG[=1]
 
 SRC = $(wildcard $(SRC_DIR)/*.v)
 TB = ../../rtl/testbench/sim_xtop.cpp
