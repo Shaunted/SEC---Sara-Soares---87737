@@ -1,5 +1,5 @@
 SRC_DIR := ../../rtl/src
-INCLUDE_DIR := ../../rtl/include
+INCLUDE_DIR :=/home/jratinho/sandbox/picoversat/rtl/include
 XDEFS := $(wildcard $(INCLUDE_DIR)/*.vh)
 HEX :=  bootrom.hex program.hex
 TESTS_DIR := ../../tests
@@ -21,7 +21,7 @@ test := hello_world
 all: a.out
 
 a.out: $(SRC) $(HEX) $(XDEFS)
-	$(VC) $(CFLAGS) $(SRC) -I $(INCLUDE_DIR) --exe $(TB) --top-module xtop --Mdir xtop_dir
+	$(VC) $(CFLAGS) $(SRC) -I$(INCLUDE_DIR) --exe $(TB) --top-module xtop --Mdir xtop_dir
 	make -C xtop_dir -j -f Vxtop.mk Vxtop
 	xtop_dir/Vxtop
 
@@ -39,7 +39,7 @@ clean:
 	@rm -f *~ 
 	@rm -f *.vcd
 	@rm -f *.hex
-	@rm -f xtop_dir
+	@rm -rf xtop_dir
 	@rm -f *.out
 	@rm -f xdict
 	@rm -f xdict.json	
