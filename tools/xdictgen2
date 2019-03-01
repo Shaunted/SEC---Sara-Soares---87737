@@ -1,0 +1,105 @@
+#!/usr/bin/python
+#Description: generates a dictionary of symbols for the assembler
+
+
+def search():
+    f.seek(0)
+    for line in f:
+        values = line.split(" ")
+        if "`define" == values[0]:
+            if string == values[1]:
+                return int(values[2])
+
+def search_hexa(string):
+    f.seek(0)
+    for line in f:
+        values = line.split(" ")
+        if "`define" == values[0]:
+            if string == values[1]:
+                values = line.split("'h")
+                values = values[1].split(" ")
+                return int(values[0],16)
+
+def search_dec(string):
+    f.seek(0)
+    for line in f:
+        values = line.split(" ")
+        if "`define" == values[0]:
+            if string == values[1]:
+                values = line.split("'d")
+                return int(values[1])
+
+
+lookup={}
+
+def read_def():
+    for line in f:
+        values = line.split(" ")
+        if "`define" == values[0]:
+            if "'d" in line:
+                const = line.split("'d")
+                const = const[1].split(" ")
+                lookup[values[1]] = int(const[0],10)
+            elif "'h" in line:
+                const = line.split("'h")
+                const = const[1].split(" ")
+                lookup[values[1]] = int(const[0],16)
+            elif "-" in line:
+                const = line.split("(")
+                const = const[1].split(")")
+                const = const[0].split("-")
+                a = const[0].split("`")
+                b = const[1].split("`")
+                lookup[values[1]] = lookup[a[1]] - lookup[b[1]]
+            else:
+                lookup[values[1]] = int(values[2])
+            
+
+
+
+
+
+
+xdict = open("xdict.json", "w")
+xdict.write('{\n')
+
+#####xdefs.vh#####
+
+f = open("../../rtl/include/xdefs.vh", "r")
+read_def()
+f.close()
+
+for key,val in lookup.items():
+    xdict.write('\"' + key + '\":' + str(val) + ',\n')
+
+
+#####xctrldefs.vh#####
+f = open("../../rtl/include/xctrldefs.vh", "r")
+read_def()
+f.close()
+
+for key,val in lookup.items():
+    xdict.write('\"' + key + '\":' + str(val) + ',\n')
+
+#####xprogdefs.vh#####
+f = open("../../rtl/include/xprogdefs.vh", "r")
+read_def()
+f.close()
+
+for key,val in lookup.items():
+    xdict.write('\"' + key + '\":' + str(val) + ',\n')
+
+#####xregfdefs.vh#####
+f = open("../../rtl/include/xregfdefs.vh", "r")
+read_def()
+f.close()
+
+for key,val in lookup.items():
+    xdict.write('\"' + key + '\":' + str(val) + ',\n')
+
+######################
+
+#Finish writing dictionary
+xdict.write('}\n')
+
+xdict.close() #close xdict
