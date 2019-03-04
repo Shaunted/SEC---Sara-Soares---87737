@@ -9,7 +9,7 @@ CFLAGS = -W all -I$(INCLUDE_DIR) -g2005-sv -D DEBUG
 
 SRC = $(wildcard $(SRC_DIR)/*.v)
 TB = ../../rtl/testbench/xtop_tb.v
-XDICT = ../../tools/xdictgen
+XDICT = ../../tools/xdictgen $(INCLUDE_DIR)
 
 #default test
 test := hello_world
