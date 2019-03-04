@@ -9,7 +9,7 @@ CFLAGS = -Wall --cc -Wno-UNUSED --trace -DDEBUG[=1]
 
 SRC = $(wildcard $(SRC_DIR)/*.v)
 TB = ../../rtl/testbench/sim_xtop.cpp
-XDICT = ../../tools/xdictgen
+XDICT = ../../tools/xdictgen $(INCLUDE_DIR)
 
 #default test
 test := hello_world

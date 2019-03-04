@@ -1,5 +1,6 @@
 #!/usr/bin/python
 #Description: generates a dictionary of symbols for the assembler
+#The .vh files directory should be included as an argument
 
 
 lookup = {}
@@ -71,27 +72,33 @@ def read_ctrldef():
 
 
 
+import sys #used for reading the defs files path
+if len(sys.argv) != 2:
+    print("Number of arguments invalid! Use 2 arguments.")
+    sys.exit()
+
+
 #####xdefs.vh#####
 
-f = open("../../rtl/include/xdefs.vh", "r")
+f = open(sys.argv[1] + "/xdefs.vh", "r")
 read_def()
 f.close()
 
 
 #####xctrldefs.vh#####
-f = open("../../rtl/include/xctrldefs.vh", "r")
+f = open(sys.argv[1] + "/xctrldefs.vh", "r")
 read_ctrldef()
 f.close()
 
 
 #####xprogdefs.vh#####
-f = open("../../rtl/include/xprogdefs.vh", "r")
+f = open(sys.argv[1] + "/xprogdefs.vh", "r")
 read_def()
 f.close()
 
 
 #####xregfdefs.vh#####
-f = open("../../rtl/include/xregfdefs.vh", "r")
+f = open(sys.argv[1] + "/xregfdefs.vh", "r")
 read_def()
 f.close()
 
