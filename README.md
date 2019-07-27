@@ -2,8 +2,8 @@
 
 ### What is this repository for? ###
 
-* picoVersat is a 16-instruction picocontroller used to replace error prone FSMs 
-* Version 0.0
+* picoVersat is a 32-bit data 16-instruction controller
+* Version 0.1
 
 
 ### How do I get set up? ###
@@ -12,25 +12,13 @@
 * Install Icarus Verilog (download a stable version from http://iverilog.icarus.com)
 * Install the picoVersat assembler 
 
-```
-    cd tools
-    make [install]
-```
+### How do I get started? ###
 
-* How to run tests
-
-``` bash
-cd tests
-make {install|testname}
+```
+    cd simulation/icarus
+    make
 ```
 
-### Contribution guidelines ###
+### How do I get started? ###
 
-* Writing tests
-
-[to be added]
-
-
-### Who do I talk to? ###
-
-* Repo owner or admin
+Read the codes starting from the simulation/icarus Makefile

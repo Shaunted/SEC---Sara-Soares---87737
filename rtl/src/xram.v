@@ -3,33 +3,25 @@
 `include "xprogdefs.vh"
 `include "xctrldefs.vh"
 
-module xprog_ram (
-		 // instruction interface
-		 input [`PROG_RAM_ADDR_W-1:0] pc,
-		 output reg [`INSTR_W-1:0]    instruction,
+module xram (
+             input                     clk,
+
+	     // instruction interface
+	     input [`ADDR_W-2:0]       pc,
+	     output reg [`INSTR_W-1:0] instruction,
 	
 		 //data interface 
-		 input 			      data_sel,
-		 input 			      data_we,
-		 input [`PROG_RAM_ADDR_W-1:0] data_addr,
-		 input [`DATA_W-1:0] 	      data_in,
-		 output [`DATA_W-1:0] 	      data_out,
-					    
-`ifdef DMA_USE
-		 // DMA interface
-		 input 			      dma_sel,
-		 input 			      dma_we,
-		 input [`PROG_ADDR_W-1:0]     dma_addr,
-		 input [`DATA_W-1:0] 	      dma_data_in,
-		 output [`DATA_W-1:0] 	      dma_data_out
-`endif
-		 input 			      clk
-		 );
+	     input                     data_sel,
+	     input                     data_we,
+	     input [`ADDR_W-2:0]       data_addr,
+	     input [`DATA_W-1:0]       data_in,
+	     output [`DATA_W-1:0]      data_out
+	     );
 
    //
    // the memory
    //
-   reg [`INSTR_W-1:0] 			    mem [2**`PROG_RAM_ADDR_W-1:0];
+   reg [`INSTR_W-1:0] 			    mem [2**(`ADDR_W-1)-1:0];
 
    // instruction port enable
    wire 				    instr_en;
@@ -41,7 +33,7 @@ module xprog_ram (
    reg [`DATA_W-1:0] 			    data_out_int;
 
    // memory data port address
-   wire [`PROG_RAM_ADDR_W-1:0] 		    data_addr_int;
+   wire [`ADDR_W-2:0]                       data_addr_int;
 
    // memory enable
    wire 				    data_en_int;
@@ -70,7 +62,7 @@ module xprog_ram (
    
    // init RAM
    initial begin
-      $readmemh("./program.hex",mem,0,2**`PROG_RAM_ADDR_W-1);
+      $readmemh("./program.hex",mem,0,2**(`ADDR_W-1)-1);
     end
 
    //instruction port

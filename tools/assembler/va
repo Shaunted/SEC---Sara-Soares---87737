@@ -9,8 +9,6 @@ from math import ceil
 
 import os.path
 
-outfilename_list = ["program.hex","bootrom.hex"]
-
 class vaError(Exception):
     def __init__(self, value):
         self.value = value
@@ -35,7 +33,7 @@ def getVal (s) :
             a = 2**lookup.get("IMM_W") + b
     return a
 
-def pass1 (program,pReg) :
+def pass1 (program,PC) :
     "determine addresses for labels and add them to the lookup dictionary"
     global lookup
     for lin in program :
@@ -44,15 +42,15 @@ def pass1 (program,pReg) :
         if lin[0] == '#' : continue   # a comment line
         if lin[0] > ' ' :             # a symbol. Save its address in lookup
             symb = flds[0]            
-            lookup[symb] = pReg
+            lookup[symb] = PC
             if len(flds) > 1 :        # advance program counter unless only a symbol
-                pReg = pReg + 1
-                print pReg, flds[0]
+                PC = PC + 1
+                print PC, flds[0]
         elif flds and flds[0] != '#' :
-            pReg = pReg + 1
-            print pReg, flds
+            PC = PC + 1
+            print PC, flds
 
-def assemble (flds, pReg) :
+def assemble (flds, PC) :
     "assemble instruction to machine code"
     global lookup
     parts = flds[1:]
@@ -82,82 +80,69 @@ def assemble (flds, pReg) :
     if len(parts) > 3 : raise vaError(2)
     
 
-def pass2 (program, pReg, outfilename) :
+def pass2 (program, PC, fout) :
     global lookup
     global error
+
     "translate assembly code and symbols to machine code"
-    fw = open(outfilename, 'w')
-    if outfilename == outfilename_list[1] : fvw = open('rom.v', 'w')
-    instrFormatTer = "%0" + str(int(ceil((lookup.get("PROG_ADDR_W")+1)/4.0))) + "x %0" + str(int(ceil(lookup.get("INSTR_W")/4.0))) + "x\t%s"
+
+    instrFormatTerminal = "%0" + str(int(ceil((lookup.get("ADDR_W")+1)/4))) + "x %0" + str(int(ceil(lookup.get("INSTR_W")/4))) + "x\t%s"
     instrFormatFile = "0" + str(int(ceil(lookup.get("INSTR_W")/4.0))) + "x"
-    if outfilename == outfilename_list[1] : instrFormatVerilogFile = "`PROG_ROM_ADDR_W'h%0" + str(int(ceil(lookup.get("PROG_ROM_ADDR_W")/4.0))) + "x: data <= `INSTR_W'h%0" + str(int(ceil(lookup.get("INSTR_W")/4.0))) + "x;\n"
+
     j = 0
     for lin in program :
+        lin2 = lin.lstrip()
         lin2 = lin.split('#', 1)[0] #ignore comment at the end of line 
         lin2 = lin2.replace(',', ' ') #remove commas
         flds = string.split(lin2)
         if lin[0] == '#' : continue        # a comment line
         if lin[0] > ' ' : flds = flds[1:]  # drop symbol if there is one
         if not flds : continue             # don't print anything, it's a blank line
-        else :
+        else:
             try :
-                instruction = assemble(flds, pReg)
-                fw.write(format(instruction, instrFormatFile)+"\n")
-                if outfilename == outfilename_list[1] : fvw.write(instrFormatVerilogFile % (pReg, instruction))
-                print instrFormatTer % (pReg, instruction, lin),
-                pReg = pReg + 1
+                instruction = assemble(flds, PC)
+                fout.write(format(instruction, instrFormatFile)+"\n")
+                print instrFormatTerminal % (PC, instruction, lin),
+                PC = PC + 1
                 j = j + 1
             except vaError as e:
-                print "*** ******** %s" % lin,
+                print "*********** %s" % lin,
                 error = 1
+
     instruction = lookup.get("nop")*16**(lookup.get("INSTR_W")/4-1)
-    if  outfilename == outfilename_list[1]:
-        instrFormatVerilogFile = "default: data <= `INSTR_W'h%0" + str(int(ceil(lookup.get("INSTR_W")/4.0))) + "x;"
-        fvw.write(instrFormatVerilogFile % (instruction))
-        fvw.close()
-        if j > 2**lookup.get("PROG_ROM_ADDR_W") :
-            print "Program memory exceeded"
-        while j < 2**lookup.get("PROG_ROM_ADDR_W") : # complete boot ROM file with nops
-            fw.write(format(instruction,instrFormatFile)+"\n")
-            j = j + 1
+    # complete program file wint zeros (nps)
+    if j > (2**lookup.get("ADDR_W")-1) :
+        print "Program memory exceeded"
     else:
-        if j > 2**lookup.get("PROG_RAM_ADDR_W") :
-            print "Program memory exceeded"
-        while j < 2**lookup.get("PROG_RAM_ADDR_W") : # complete instruction file with nops
-            fw.write(format(instruction,instrFormatFile)+"\n")
+        while j < 2**(lookup.get("ADDR_W")-1) : 
+            fout.write(format(instruction,instrFormatFile)+"\n")
             j = j + 1
-    fw.close()
 
 def main () :
     global lookup
     
-    with open('xdict.json','r') as inf:
-        lookup = eval(inf.read())
+    #open symbol dictionary
+    xdict = open('xdict.json','r');
+    lookup = eval(xdict.read())
     
-    # assume it is a main program for RAM
-    pReg = lookup.get("PROG_RAM")
-    outfilename = "program.hex"
-    i = 1
-    while i < len(sys.argv):
-        arg = sys.argv[i]
-        if arg == "-b":
-            # it is a boot rom program
-            pReg = lookup.get("PROG_ROM")
-            outfilename = "bootrom.hex"
-            i = i + 1
-        else:
-            print "Usage: ./assembler [-b] < in.va > out.hex"
-            print "     -b: assemble a boot loader from address 0"
-            print "Wrong argument: " + sys.argv[i]
-            sys.exit(1)
+    # init program counter
+    PC = 0
+
+    if len(sys.argv) != 3:
+        print "Usage: ./va infile outfile"
+        sys.exit(1)
+    else:
+        infile = sys.argv[1]
+        outfile = sys.argv[2]
     
-    if len(sys.argv) == 1 and pReg == None:
-        print "Program addresses are not defined"
-        sys.exit(2)
-    
-    program = sys.stdin.readlines()
-    pass1 (program, pReg)
-    pass2 (program, pReg, outfilename)
+    fin = open (infile, 'r')
+    program = fin.readlines()
+    pass1 (program, PC)
+
+    fout = open (outfile, 'w')
+    pass2 (program, PC, fout)
+    fout.close()
+
     if (error == 1):
         print "Program has errors"
 

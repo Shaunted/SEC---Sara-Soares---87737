@@ -6,16 +6,18 @@
 `define DATA_W 32 // bits
 
 // ADDRESS WIDTH
-`define ADDR_W 10
+`define ADDR_W 15
+
+// MODULE SELECT ADDR WIDTH
+`define SEL_ADDR_W 2
 
 // DEBUG: USE PRINTER AND GENERATE VCD FILE
 //`define DEBUG
 
 //
-// VERSAT MEMORY MAP (2^ADDR_W addresses) //1024
+// VERSAT MEMORY MAP
 //
-
-//addresses 0-15 are reserved by the controler
-`define REGF_BASE `ADDR_W'h010 //16-31
-`define CPRT_BASE `ADDR_W'h020 //32
-`define MEM_BASE `ADDR_W'h200 //512-1024
+`define MEM_BASE `ADDR_W'h0000
+`define REGF_BASE `ADDR_W'h2000
+`define CPRT_BASE `ADDR_W'h4000 
+`define TRAP_BASE `ADDR_W'h6000 

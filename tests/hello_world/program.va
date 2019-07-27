@@ -9,13 +9,11 @@
 	wrw R1
 	
 # set RB to point to first char
-        ldi PROG_RAM
+        ldi c0
         wrw R4
-	ldi MEM_BASE
-	addi c0
-        sub R4
 	wrw RB
 
+# read string from memory and write to char printer 
 loop 	rdwb
 	rdwb            #need to read twice due to memory 1 cycle delay
 	wrw CPRT_BASE
@@ -26,11 +24,9 @@ loop 	rdwb
 	bneqi loop      #go back to loop if non-zero, regA is decremented
 	wrw R1          #stores back decremented iterator
 
-#finish program by jumping back to boot ROM
-	ldi 0
-	beqi PROG_ROM
-	nop
-
+#finish by activating trap
+end	wrw TRAP_BASE
+        
 # char ascii constants placed here	
 c0	.memset 0x0A
 	.memset 0x48
@@ -48,15 +44,3 @@ c0	.memset 0x0A
 	.memset 0x0A
 	.memset 0x0D
 	.memset 0x0A
-
-
-
-
-
-
-
-
-
-
-
-

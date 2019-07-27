@@ -12,6 +12,8 @@ module xtop_tb;
    //
    reg clk;
    reg rst;
+   wire trap;
+   
 
    //parallel interface
    reg 	[`REGF_ADDR_W-1:0] par_addr;
@@ -29,6 +31,7 @@ module xtop_tb;
    xtop uut (
 	      .clk(clk),
               .rst(rst),
+             .trap(trap),
 	      
    	     // parallel interface
 	     .par_addr(par_addr),
@@ -63,19 +66,10 @@ module xtop_tb;
       //
       // Run picoVersat
       //
-
-      #(5*clk_period) par_addr = 0;
-      par_we = 1;
-      par_in = 1; //must be non-zero to jump to main program
-
       start_time = $time;
 
-      #clk_period par_we = 0;
-      par_addr = 0;
 
-      //wait for versat to reset R0
-      while(par_out != 0) #clk_period;
-
+      @(posedge trap) $finish;
       $display("Execution time in clock cycles: %0d",($time-start_time)/clk_period);
 
       //
@@ -89,11 +83,10 @@ module xtop_tb;
       $writememh("data_out.hex", data, 0, 2**`REGF_ADDR_W - 1);
 
       //
-      // End/pause simulation
+      // End simulation
       //
-      #clk_period $finish;
-      // #clk_period $stop;
-
+      $finish;
+      
    end // initial begin
 
    

@@ -1,15 +1,16 @@
 SRC_DIR := ../../rtl/src
 INCLUDE_DIR := ../../rtl/include
 XDEFS := $(wildcard $(INCLUDE_DIR)/*.vh)
-HEX :=  bootrom.hex program.hex
+HEX :=  program.hex
 TESTS_DIR := ../../tests
 
 VC = iverilog
 CFLAGS = -W all -I$(INCLUDE_DIR) -g2005-sv -D DEBUG
 
-SRC = $(wildcard $(SRC_DIR)/*.v)
+SRC = $(wildcard $(SRC_DIR)/*.v) $(wildcard $(TESTS_DIR)/rtl/*.v)
+
 TB = ../../rtl/testbench/xtop_tb.v
-XDICT = ../../tools/xdictgen
+XDICT = xdict.json
 
 #default test
 test := hello_world
@@ -25,11 +26,12 @@ a.out: $(SRC) $(HEX) $(XDEFS)
 	./a.out
 
 # Create dictionary and .hex files
-$(HEX):$(XDEFS) $(XDICT)
-	$(XDICT)
+$(HEX):$(XDEFS)
+	../../tools/xdictgen
 	mv xdict.json $(TESTS_DIR)/$(test)
 	make -C $(TESTS_DIR)/$(test) $(testparams)
 	mv $(TESTS_DIR)/$(test)/*.hex .
+
 
 # CLEANUP, ETC
 clean: 	

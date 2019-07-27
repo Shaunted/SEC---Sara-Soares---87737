@@ -5,7 +5,6 @@
 // VERSAT REGISTER FILE ADDRESS WIDTH
 `define REGF_ADDR_W 4 //2**4 = 16 registers
 
-
 // MEMORY MAP
 `define R0 `REGF_BASE
 `define R1 (`R0+1'b1)

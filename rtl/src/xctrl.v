@@ -5,19 +5,19 @@
 `include "xprogdefs.vh"
 
 module xctrl (
-	      input 			    clk,
-	      input 			    rst,
+	      input                    clk,
+	      input                    rst,
 	      
 	      // Program memory interface
-	      output reg [`PROG_ADDR_W-1:0] pc,
-	      input [`INSTR_W-1:0] 	    instruction,
+	      output reg [`ADDR_W-2:0] pc,
+	      input [`INSTR_W-1:0]     instruction,
 	      
 	      // Data memory interface 
-	      output reg		    data_sel,
-	      output reg 		    data_we,
-	      output reg [`ADDR_W-1:0] 	    data_addr,
-	      input [`DATA_W-1:0] 	    data_to_rd,
-	      output [`DATA_W-1:0] 	    data_to_wr
+	      output reg               data_sel,
+	      output reg               data_we,
+	      output reg [`ADDR_W-1:0] data_addr,
+	      input [`DATA_W-1:0]      data_to_rd,
+	      output [`DATA_W-1:0]     data_to_wr
 	      );
    
    reg [`DATA_W-1:0] 			  data_to_rd_int;
@@ -44,7 +44,7 @@ module xctrl (
    wire 				  negative_nxt;
  				  
    // Program counter 
-   reg [`PROG_ADDR_W-1:0] 		  pc_nxt;
+   reg [`ADDR_W-2:0]                      pc_nxt;
    
    // Instruction fields
    wire [`OPCODESZ-1 :0] 		  opcode;
@@ -85,7 +85,7 @@ module xctrl (
    always @ (posedge clk) begin
       if (rst) begin
 	 regA <= `DATA_W'd0;
-	 pc   <= `PROG_ROM;
+	 pc   <= 0;
       end else begin
 	 regA <= regA_nxt;
 	 pc   <= pc_nxt;
@@ -124,22 +124,22 @@ module xctrl (
 	`BEQI: begin
 	   regA_nxt = regA - `DATA_W'd1;
 	   if ( regA == `DATA_W'd0 )
-	     pc_nxt = imm[`PROG_ADDR_W-1:0];
+	     pc_nxt = imm[`ADDR_W-2:0];
 	end
 	`BEQ: begin
 	   regA_nxt = regA - `DATA_W'd1;
 	   if ( regA == `DATA_W'd0 )
-	     pc_nxt = regB[`PROG_ADDR_W-1:0];
+	     pc_nxt = regB[`ADDR_W-2:0];
 	end
 	`BNEQI: begin
 	   regA_nxt = regA - `DATA_W'd1;
 	   if ( regA != `DATA_W'd0 )
-	     pc_nxt = imm[`PROG_ADDR_W-1:0];
+	     pc_nxt = imm[`ADDR_W-2:0];
 	end
 	`BNEQ: begin
 	   regA_nxt = regA - `DATA_W'd1;
 	   if ( regA != `DATA_W'd0 )
-	     pc_nxt = regB[`PROG_ADDR_W-1:0];
+	     pc_nxt = regB[`ADDR_W-2:0];
 	end
 	`LDI: begin
 	   regA_nxt = imm;
@@ -220,23 +220,22 @@ module xctrl (
       
       case (opcode)
 	`RDW: begin 
-	   data_sel  = (addrint >= `REGF_BASE);
+	   data_sel  = 1'b1;
 	end
 	`RDWB: begin
-	   data_sel  = (regB >= `REGF_BASE);
-	   data_addr = addr_from_regB + imm[`PROG_ADDR_W-1:0];
+	   data_sel  = 1'b1;
+	   data_addr = addr_from_regB + imm[`ADDR_W-1:0];
 	end
 	`WRW: begin
-	   data_sel  = (addrint >= `REGF_BASE);
+	   data_sel  = 1'b1;
 	   data_we  = 1'b1;
 	end
 	`WRWB: begin
-	   data_sel  = (regB >= `REGF_BASE);
+	   data_sel  = 1'b1;
 	   data_we = 1'b1;
-	   data_addr = addr_from_regB + imm[`PROG_ADDR_W-1:0];
+	   data_addr = addr_from_regB + imm[`ADDR_W-1:0];
 	end
-	default:
-	     data_we  = 1'b0;
+	default:;
       endcase
    end // always @ *
    
