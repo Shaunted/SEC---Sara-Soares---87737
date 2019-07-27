@@ -10,7 +10,9 @@ CFLAGS = -W all -I$(INCLUDE_DIR) -g2005-sv -D DEBUG
 SRC = $(wildcard $(SRC_DIR)/*.v) $(wildcard $(TESTS_DIR)/rtl/*.v)
 
 TB = ../../rtl/testbench/xtop_tb.v
+
 XDICT = xdict.json
+
 
 #default test
 test := hello_world
@@ -27,7 +29,7 @@ a.out: $(SRC) $(HEX) $(XDEFS)
 
 # Create dictionary and .hex files
 $(HEX):$(XDEFS)
-	../../tools/xdictgen
+	../../tools/xdictgen $(INCLUDE_DIR)
 	mv xdict.json $(TESTS_DIR)/$(test)
 	make -C $(TESTS_DIR)/$(test) $(testparams)
 	mv $(TESTS_DIR)/$(test)/*.hex .
