@@ -69,9 +69,11 @@ module xtop_tb;
       start_time = $time;
 
 
-      @(posedge trap) $finish;
+      @(posedge trap);
       $display("Execution time in clock cycles: %0d",($time-start_time)/clk_period);
+      $finish;
 
+      
       //
       // Dump reg file data to outfile
       //
