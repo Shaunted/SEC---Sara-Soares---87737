@@ -235,6 +235,19 @@ module xctrl (
 	   data_we = 1'b1;
 	   data_addr = addr_from_regB + imm[`ADDR_W-1:0];
 	end
+	`ADD: begin
+	   data_sel  = 1'b1;
+	end
+	`SUB: begin
+	   data_sel  = 1'b1;
+	end
+	`AND: begin
+	   data_sel  = 1'b1;
+	end
+	`XOR: begin
+	   data_sel  = 1'b1;
+	end
+
 	default:;
       endcase
    end // always @ *

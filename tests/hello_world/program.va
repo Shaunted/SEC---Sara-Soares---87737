@@ -3,7 +3,16 @@
 #
 #	a simple picoVersat program
 #
-	
+
+# uncomment test ADD instruction        
+#        ldi 2
+#        wrw R1
+#        ldi 3
+#        wrw R2
+#        add R1
+#        wrw TRAP_BASE
+
+
 # set R1 iterator 	
 	ldi 15
 	wrw R1
@@ -23,6 +32,9 @@ loop 	rdwb
 	rdw R1          #load iterator
 	bneqi loop      #go back to loop if non-zero, regA is decremented
 	wrw R1          #stores back decremented iterator
+
+
+
 
 #finish by activating trap
 end	wrw TRAP_BASE
