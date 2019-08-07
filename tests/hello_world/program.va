@@ -12,6 +12,22 @@
 #        add R1
 #        wrw TRAP_BASE
 
+#   assign regC = {negative, overflow, {(`DATA_W-3){1'b0}}, carry};
+
+#uncomment to test carry and negative
+        ldi 1
+        wrw R0
+        ldi -1
+        addi -1
+        addi 4
+        
+#uncomment to test overflow
+        ldi 0xffff
+        ldi 0x7fff
+        wrw R1
+        ldi 0
+        add R1
+        add R1
 
 # set R1 iterator 	
 	ldi 15
@@ -34,10 +50,8 @@ loop 	rdwb
 	wrw R1          #stores back decremented iterator
 
 
-
-
 #finish by activating trap
-end	wrw TRAP_BASE
+end	wrw TRAP
         
 # char ascii constants placed here	
 c0	.memset 0x0A

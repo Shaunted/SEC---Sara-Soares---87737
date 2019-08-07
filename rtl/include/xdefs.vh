@@ -19,5 +19,9 @@
 //
 `define MEM_BASE `ADDR_W'h0000
 `define REGF_BASE `ADDR_W'h2000
-`define CPRT_BASE `ADDR_W'h4000 
-`define TRAP_BASE `ADDR_W'h6000 
+`define CPRT_BASE `ADDR_W'h3000 
+`define RB  `ADDR_W'h4000 
+`define RC `ADDR_W'h5000
+`define TRAP `ADDR_W'h7000 
+
+

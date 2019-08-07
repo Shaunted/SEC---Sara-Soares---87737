@@ -7,16 +7,17 @@
 
 // Instruction fields
 `define OPCODESZ 4
-`define IMM_W (`INSTR_W-`OPCODESZ)
+`define IMM_W 28
 
 `define DELAY_SLOTS 1
 
 // Instruction codes
 
-// arithmetic and logic
+// arithmetic
 `define ADDI    4'h0
 `define ADD     4'h1
 `define SUB     4'h2
+//logic
 `define SHFT    4'h3
 `define AND     4'h4
 `define XOR     4'h5
@@ -34,7 +35,3 @@
 `define BEQ     4'hD
 `define BNEQI   4'hE
 `define BNEQ    4'hF
-
-// Internal register addresses
-`define RB `ADDR_W'd0
-`define RC `ADDR_W'd1

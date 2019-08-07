@@ -9,7 +9,7 @@
 module xtop (
 	     input                    clk,
 	     input                    rst,
-             output                   trap,
+             output reg               trap,
 
 	     // native interface
 	     input [`REGF_ADDR_W-1:0] par_addr,
@@ -38,7 +38,7 @@ module xtop (
    
    // SIGNALS FROM PERIPHERALS
    reg 				  mem_sel;
-   wire [`DATA_W-1:0] 		  prog_data_to_rd;
+   wire [`DATA_W-1:0] 		  mem_data_to_rd;
    
    reg 				  regf_sel;
    wire [`DATA_W-1:0] 		  regf_data_to_rd;
@@ -66,12 +66,12 @@ module xtop (
 		     .pc(pc),
 		     .instruction(instruction),
 		     
-		     // Data bus
-		     .data_sel(data_sel),
-		     .data_we (data_we), 
-		     .data_addr(data_addr),
-		     .data_to_rd(data_to_rd), 
-		     .data_to_wr(data_to_wr)
+		     // mem data bus
+		     .data_mem_sel(data_sel),
+		     .data_mem_we (data_we), 
+		     .data_mem_addr(data_addr),
+		     .data_from_mem(data_to_rd), 
+		     .data_to_mem(data_to_wr)
 		     );
 
    // HOST-CONTROLLER SHARED REGISTER FILE
@@ -105,11 +105,14 @@ module xtop (
 	       .data_we(data_we),
 	       .data_addr(data_addr[`ADDR_W-2 : 0]),
 	       .data_in(data_to_wr),
-	       .data_out(prog_data_to_rd)
+	       .data_out(mem_data_to_rd)
 	       );
 
 
    // ADDRESS DECODER
+
+   wire                           trap_sel;
+   
    xaddr_decoder addr_decoder (
 	                       // address
 	                       .addr(data_addr[`ADDR_W-1 -: `SEL_ADDR_W]),
@@ -117,7 +120,7 @@ module xtop (
                                
                                // read ports
                                .regf_data_to_rd(regf_data_to_rd),
-                               .prog_data_to_rd(prog_data_to_rd),
+                               .mem_data_to_rd(mem_data_to_rd),
                                
                                // module select
 	                       .mem_sel(mem_sel),
@@ -126,10 +129,16 @@ module xtop (
 	                       .cprt_sel(cprt_sel),
 `endif
                                .data_to_rd(data_to_rd),
-                               .trap(trap)
+                               .trap_sel(trap_sel)
                                );
    
 
+   always @(posedge clk, posedge rst)
+     if(rst)
+       trap <= 0;
+     else if (trap_sel & data_we)
+       trap <= 1;
+   
    //
    //
    // USER MODULES INSERTED BELOW

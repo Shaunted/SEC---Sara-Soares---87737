@@ -29,17 +29,16 @@ module xtop_tb;
    
    // Instantiate the Unit Under Test (UUT)
    xtop uut (
-	      .clk(clk),
-              .rst(rst),
+	     .clk(clk),
+             .rst(rst),
              .trap(trap),
-	      
+	     
    	     // parallel interface
 	     .par_addr(par_addr),
 	     .par_we(par_we),
 	     .par_in(par_in),
 	     .par_out(par_out)
-    
-	      );
+	     );
    
    initial begin
       
@@ -69,9 +68,9 @@ module xtop_tb;
       start_time = $time;
 
 
-      @(posedge trap);
-      $display("Execution time in clock cycles: %0d",($time-start_time)/clk_period);
-      $finish;
+      wait(trap) #100;
+      $display("Execution time in clock cycles: %0d %d",($time-start_time)/clk_period, trap);
+
 
       
       //

@@ -11,7 +11,7 @@ def read_def():
     for line in f:
         values = line.split("\n")
         values = values[0].split(" ")
-        if "`define" == values[0]:
+        if values[0] == "`define":
             if values[2].isdigit() == False:
                 if "'d" in line:
                     const = line.split("'d")
@@ -42,36 +42,23 @@ def read_def():
             else:
                 lookup[values[1]] = int(values[2])
 
-#function to read the ctrldefs (converts inst codes to lower case)
+#function to read the ctrldefs (converts instr codes to lower case)
 def read_ctrldef():
     for line in f:
         values = line.split("\n")
         values = values[0].split(" ")
-        if "`define" == values[0]:
+        if values[0] == "`define":
             if values[2].isdigit() == False:
-                if "'d" in line:
-                    const = line.split("'d")
-                    const = const[1].split(" ")
-                    lookup[values[1]] = int(const[0],10)
-                elif "'h" in line:
+                if "'h" in line:
                     const = line.split("'h")
                     const = const[1].split(" ")
                     lookup[values[1].lower()] = int(const[0],16)
                 elif "-" in line:
-                    const = line.split("(")
-                    const = const[1].split(")")
-                    const = const[0].split("-")
-                    a = const[0].split("`")
-                    b = const[1].split("`")
-                    lookup[values[1]] = lookup[a[1]] - lookup[b[1]]
-                else:
-                    const = values[2].split("`")
-                    const = const[1].split("\n")
-                    lookup[values[1]] = lookup[const[0]]
+                    const = line.split("-")
+                    lookup[values[1]] = 2**lookup["ADDR_W"] - int(const[1])
             else:
                 lookup[values[1]] = int(values[2])
-
-
+    print lookup
 
 import sys #used for reading the defs files path
 if len(sys.argv) != 2:
