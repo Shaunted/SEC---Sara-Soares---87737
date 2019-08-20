@@ -15,11 +15,11 @@ module xtop_tb;
    wire trap;
    
 
-   //parallel interface
-   reg 	[`REGF_ADDR_W-1:0] par_addr;
-   reg 			   par_we;
-   reg [`DATA_W-1:0] 	   par_in;
-   wire [`DATA_W-1:0] 	   par_out;
+   //exteranl parallel interface
+   wire [`ADDR_W-2:0] par_addr;
+   wire               par_we;
+   reg [`DATA_W-1:0]  par_in;
+   wire [`DATA_W-1:0] par_out;
 
    //iterator and timer
    integer 		   k, start_time;
@@ -33,7 +33,7 @@ module xtop_tb;
              .rst(rst),
              .trap(trap),
 	     
-   	     // parallel interface
+   	     // external parallel interface
 	     .par_addr(par_addr),
 	     .par_we(par_we),
 	     .par_in(par_in),
@@ -52,8 +52,6 @@ module xtop_tb;
       rst = 0;  
       
       // Initialize parallel interface
-      par_addr = 0;
-      par_we = 0;
       par_in = 0;
 
      // assert reset for 1 clock cycle
@@ -68,51 +66,48 @@ module xtop_tb;
       start_time = $time;
 
 
-      wait(trap) #100;
-      $display("Execution time in clock cycles: %0d %d",($time-start_time)/clk_period, trap);
-
-
-      
       //
       // Dump reg file data to outfile
       //
-      for (k = 0; k < 2**`REGF_ADDR_W; k=k+1) begin
-	   data[k] = par_out;
-	 #clk_period par_addr = par_addr + 1;
-      end
+      for (k = 0; k < 2**`REGF_ADDR_W; k=k+1)
+	   data[k] = uut.regf.regf[k];
   
       $writememh("data_out.hex", data, 0, 2**`REGF_ADDR_W - 1);
 
-      //
-      // End simulation
-      //
-      $finish;
-      
    end // initial begin
 
-   
+
+   //
+   // End simulation
+   //   
+   always @(posedge clk)
+     if(trap) begin 
+        $display("Catched Trap at time  %0d clock cycles:",($time-start_time)/clk_period);
+        $finish;
+     end 
+
+   // CLOCK
    always 
      #(clk_period/2) clk = ~clk;
 
    // show registers
    wire [`DATA_W-1:0] r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12, r13, r14, r15;
-
-   assign r0 = uut.regf.reg_1[0];
-   assign r1 = uut.regf.reg_1[1];
-   assign r2 = uut.regf.reg_1[2];
-   assign r3 = uut.regf.reg_1[3];
-   assign r4 = uut.regf.reg_1[4];
-   assign r5 = uut.regf.reg_1[5];
-   assign r6 = uut.regf.reg_1[6];
-   assign r7 = uut.regf.reg_1[7];
-   assign r8 = uut.regf.reg_1[8];
-   assign r9 = uut.regf.reg_1[9];
-   assign r10 = uut.regf.reg_1[10];
-   assign r11 = uut.regf.reg_1[11];
-   assign r12 = uut.regf.reg_1[12];
-   assign r13 = uut.regf.reg_1[13];
-   assign r14 = uut.regf.reg_1[14];
-   assign r15 = uut.regf.reg_1[15];  
+   assign r0 = uut.regf.regf[0];
+   assign r1 = uut.regf.regf[1];
+   assign r2 = uut.regf.regf[2];
+   assign r3 = uut.regf.regf[3];
+   assign r4 = uut.regf.regf[4];
+   assign r5 = uut.regf.regf[5];
+   assign r6 = uut.regf.regf[6];
+   assign r7 = uut.regf.regf[7];
+   assign r8 = uut.regf.regf[8];
+   assign r9 = uut.regf.regf[9];
+   assign r10 = uut.regf.regf[10];
+   assign r11 = uut.regf.regf[11];
+   assign r12 = uut.regf.regf[12];
+   assign r13 = uut.regf.regf[13];
+   assign r14 = uut.regf.regf[14];
+   assign r15 = uut.regf.regf[15];  
 
 endmodule
 

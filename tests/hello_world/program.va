@@ -3,39 +3,60 @@
 #
 #	a simple picoVersat program
 #
-
-# uncomment test ADD instruction        
-#        ldi 2
-#        wrw R1
-#        ldi 3
-#        wrw R2
-#        add R1
-#        wrw TRAP_BASE
-
 #   assign regC = {negative, overflow, {(`DATA_W-3){1'b0}}, carry};
 
-#uncomment to test carry and negative
+#test carry
         ldi 1
         wrw R0
         ldi -1
         addi -1
-        addi 4
-        
-#uncomment to test overflow
+        rdw RC
+        and R0
+        bneqi neg
+        ldi 'c'
+        wrw CPRT_BASE
+        ldi '\n'
+        wrw CPRT_BASE
+        bneqi end
+
+
+#test negative
+neg     ldi 4
+        wrw R0
+        ldi -1
+        addi -1
+        rdw RC
+        and R0
+        bneqi ov
+        ldi 'n'
+        wrw CPRT_BASE
+        ldi '\n'
+        wrw CPRT_BASE
+        bneqi end
+
+
+#test overflow
+ov      ldi 2
+        wrw R0
         ldi 0xffff
-        ldi 0x7fff
+        ldih 0x7fff
         wrw R1
-        ldi 0
         add R1
-        add R1
+        rdw RC
+        and R0
+        bneqi pr
+        ldi 'o'
+        wrw CPRT_BASE
+        ldi '\n'
+        wrw CPRT_BASE
+        bneqi end
 
 # set R1 iterator 	
-	ldi 15
+pr	ldi 15
 	wrw R1
 	
 # set RB to point to first char
         ldi c0
-        wrw R4
 	wrw RB
 
 # read string from memory and write to char printer 
@@ -48,25 +69,24 @@ loop 	rdwb
 	rdw R1          #load iterator
 	bneqi loop      #go back to loop if non-zero, regA is decremented
 	wrw R1          #stores back decremented iterator
-
-
-#finish by activating trap
-end	wrw TRAP
+        
+#finish by writing to invalid address to activate trap
+end	wrw 0x7fff
         
 # char ascii constants placed here	
-c0	.memset 0x0A
-	.memset 0x48
-	.memset 0x65
-	.memset 0x6C
-	.memset 0x6C
-	.memset 0x6F
-	.memset 0x20
-	.memset 0x77
-	.memset 0x6F
-	.memset 0x72
-	.memset 0x6C
-	.memset 0x64
-	.memset 0x21
-	.memset 0x0A
-	.memset 0x0D
-	.memset 0x0A
+c0	.memset '\n'
+	.memset 'H'
+	.memset 'e'
+	.memset 'l'
+	.memset 'l'
+	.memset 'o'
+	.memset ' '
+	.memset 'W'
+	.memset 'o'
+	.memset 'r'
+	.memset 'l'
+	.memset 'd'
+	.memset '!'
+	.memset '\n'
+	.memset '\r'
+	.memset '\n'

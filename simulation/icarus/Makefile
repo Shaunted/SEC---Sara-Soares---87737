@@ -9,8 +9,11 @@ SRC := $(wildcard $(SRC_DIR)/*.v)
 TB := ../../rtl/testbench/xtop_tb.v
 
 #assembly
-XDICT = xdict.json
 TESTS_DIR := ../../tests
+
+#symbo dictionary
+XDICT = $(TESTS_DIR)/$(test)/xdict.json
+
 VA := $(TESTS_DIR)/$(test)/program.va
 HEX :=  program.hex
 
@@ -21,18 +24,20 @@ CFLAGS = -W all -I$(INCLUDE_DIR) -g2005-sv -D DEBUG
 #  PICOVERSAT SIMULATION
 #
 
-all: a.out
+all: 
+	./a.out
 
 a.out: $(SRC) $(HEX) $(XDEFS) $(TB)
 	$(VC) $(CFLAGS) $(SRC) $(TB)
-	./a.out
 
 # Create dictionary and .hex files
-$(HEX): $(XDEFS) $(VA)
-	../../tools/xdictgen $(INCLUDE_DIR)
-	mv xdict.json $(TESTS_DIR)/$(test)
+$(HEX): $(XDEFS) $(VA) $(XDICT)
 	make -C $(TESTS_DIR)/$(test)
 	mv $(TESTS_DIR)/$(test)/*.hex .
+
+$(XDICT): $(XDEFS)
+	../../tools/xdictgen $(INCLUDE_DIR)
+	mv xdict.json $(TESTS_DIR)/$(test)
 
 
 # CLEANUP, ETC

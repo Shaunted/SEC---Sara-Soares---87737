@@ -1,4 +1,0 @@
-//
-// VERSAT PROGRAM MEMORY DEFINES
-//
-

@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
-
 `include "xdefs.vh"
-`include "xctrldefs.vh"
-`include "xprogdefs.vh"
+
+`define RB (`REGF_BASE+2**`REGF_ADDR_W)
+`define RC (`REGF_BASE+2**`REGF_ADDR_W+1)
 
 module xctrl (
 	      input                    clk,
@@ -13,11 +13,11 @@ module xctrl (
 	      input [`INSTR_W-1:0]     instruction,
 	      
 	      // data memory interface 
-	      output reg               data_mem_sel,
-	      output reg               data_mem_we,
-	      output reg [`ADDR_W-1:0] data_mem_addr,
-	      input [`DATA_W-1:0]      data_from_mem,
-	      output [`DATA_W-1:0]     data_to_mem
+	      output reg               mem_sel,
+	      output reg               mem_we,
+	      output reg [`ADDR_W-1:0] mem_addr,
+	      input [`DATA_W-1:0]      mem_data_from,
+	      output [`DATA_W-1:0]     mem_data_to
 	      );
    
    // Instruction fields
@@ -25,7 +25,7 @@ module xctrl (
    wire signed [`DATA_W-1:0] 		  imm;
 
    //operand 
-   reg [`DATA_W-1:0] 			  operand;
+   wire [`DATA_W-1:0] 			  operand;
    
    //register A (accumulator)   
    reg [`DATA_W-1:0] 			  regA;
@@ -43,81 +43,101 @@ module xctrl (
    reg                                    alu_negative;
    
 
-   //
-   // DATA BUS
-   //
-       
-   // data bus write value assignment
-   assign data_to_mem = regA;
+  
+   // USEFUL INSTRUCTION GROUPS
+   wire                                   load_imm_ops = (opcode == `ldi || opcode == `ldih);
+   wire                                   load_mem_ops = (opcode == `rdw || opcode == `rdwb);
+   wire                                   load_ops = load_imm_ops | load_mem_ops;
+   wire                                   store_mem_ops = (opcode == `wrw || opcode == `wrwb);
    
-   //address computation 
-   always @ * begin
-      if(opcode == `RDWB || opcode == `WRWB)
-        data_mem_addr = regB[`ADDR_W-1:0];
-      else
-        data_mem_addr = imm[`ADDR_W-1:0];
-   end
+   wire                                   alu_imm_ops = (opcode == `addi || opcode == `shft);
+   wire                                   alu_arith_ops  = (opcode == `addi || opcode == `add || opcode == `sub);
+   wire                                   alu_logic_ops  = (opcode == `and || opcode == `xor);
+   wire                                   alu_mem_ops  = (alu_arith_ops && opcode != `addi) || alu_logic_ops;
+   
+   wire                                   alu_ops  = alu_imm_ops | alu_logic_ops | alu_arith_ops ;
+   
+   wire                                   imm_ops = load_imm_ops | alu_imm_ops;
 
-   assign data_mem_we = store_mem_ops;
-   assign data_mem_sel = mem_ops | alu_mem_ops;
+   wire                                   branch_ops = (opcode == `beqi || opcode == `bneqi || opcode == `beq || opcode == `bneq);
+   
+   
+
+
    
    // instruction unpacking
+
+   //opcode
    assign opcode  = instruction[`INSTR_W-1 -: `OPCODESZ];
-
-   // useful instruction groups
-   wire                                   load_imm_ops = (opcode == `LDI || opcode == `LDIH);
-   wire                                   load_mem_ops = (opcode == `RDW || opcode == `RDWB);
-   wire                                   load_ops = load_imm_ops | load_mem_ops;
-
-   wire                                   store_mem_ops = (opcode == `WRW || opcode == `WRWB);
-   wire                                   mem_ops = store_mem_ops | load_mem_ops;                                  
    
-   wire                                   alu_imm_ops = (opcode == `ADDI || opcode == `SHFT);
-   wire                                   alu_mem_ops  = (opcode == `ADD || opcode == `SUB);
-   wire                                   alu_arith_ops  = (opcode == `ADDI || alu_mem_ops);
-   wire                                   alu_logic_ops  = (opcode == `AND ||opcode == `XOR);
-   
-   wire                                   alu_ops  = alu_imm_ops | alu_mem_ops | alu_logic_ops;
-
-   wire                                   imm_ops = load_imm_ops | alu_imm_ops;
-   
-   
-   //immediate computation
-   assign imm  = (opcode == `LDIH)?                 
+   //immediate
+   assign imm  = (opcode == `ldih)?                 
                  {instruction[`DATA_W/2-1:0], regA[`DATA_W/2-1:0]} :
                  { { (`DATA_W-`IMM_W) {instruction[`IMM_W-1]} }, instruction[`IMM_W-1:0]};
 
 
-   // operand selection 
+   //
+   // MEMORY MAPPED DATA BUS
+   //
+       
+   //select bit
+   assign mem_sel = (store_mem_ops | load_mem_ops | alu_mem_ops) && mem_addr != `RB && mem_addr != `RC;
+
+   //memory
+   assign mem_we = store_mem_ops;
+
+   // write word 
+   assign mem_data_to = regA;
+   
+   //address
    always @ * begin
-      if (data_mem_addr == `RB) begin
-         operand = regB;
-      end else if (data_mem_addr == `RC)
-        if(opcode == `SUB)
-	  operand = -regC;
-        else
-	  operand = regC;
-      else if (imm_ops)
-        operand = imm;
+      if(opcode == `rdwb || opcode == `wrwb)
+        mem_addr = regB[`ADDR_W-1:0];
       else
-        if(opcode == `SUB)
-          operand = -data_from_mem;
-        else
-          operand = data_from_mem;
+        mem_addr = imm[`ADDR_W-1:0];
    end
    
 
-   // program counter 
-   always @(posedge clk, posedge rst) begin
-      if(rst)
-        pc  = 0;
-      else if (opcode == `BEQI || opcode == `BNEQI)
-	pc = imm[`ADDR_W-1:0];
-      else if (opcode == `BEQ || opcode == `BNEQ)
-	pc = regB[`ADDR_W-1:0];
-      else
-        pc = pc + 1'b1;
+   // operand selection 
+   reg [`DATA_W-1:0]                     operand_int;
+   always @ * begin
+      operand_int = 0;
+      if(load_ops || alu_ops) begin
+         if (mem_addr == (`RB))
+           operand_int = regB;
+         else if (mem_addr == (`RC))
+	   operand_int = regC;
+         else if (imm_ops)
+           operand_int = imm;
+         else if (mem_sel)
+           operand_int = mem_data_from;
+      end
    end
+
+   assign operand = (opcode == `sub)? -operand_int: operand_int;
+   
+
+   // program counter 
+   always @(posedge clk, posedge rst)
+      if(rst)
+        pc  <= 0;
+      else begin
+         pc <= pc + 1'b1;
+         if (opcode == `beqi && regA == 0) begin 
+	    pc <= imm[`ADDR_W-1:0];
+            //$display("beqi: op=%x cd=%x RA=%x", opcode, `beqi, regA);
+         end else if (opcode == `bneqi && regA != 0) begin
+	    pc <= imm[`ADDR_W-1:0];
+            //$display("bneqi: op=%x cd=%x RA=%x", opcode, `beqi, regA);
+         end else if (opcode == `beq && regA == 0) begin 
+	    pc <= regB[`ADDR_W-1:0];
+            //$display("beq: op=%x cd=%x RA=%x", opcode, `beqi, regA);
+         end else if (opcode == `bneq && regA != 0) begin
+	    pc <= regB[`ADDR_W-1:0];
+            //$display("bneq: op=%x cd=%x RA=%x", opcode, `bneq, regA);
+         end
+      end
+ 
 
 
    //
@@ -125,21 +145,23 @@ module xctrl (
    //
    
    // register A
-   always @(posedge clk, posedge rst) begin
+   always @(posedge clk, posedge rst)
       if(rst)
         regA <= 0;
-      else
-        if (load_ops)
-	  regA <= operand;
-        else if(alu_ops)
-	  regA <= alu_result;
-   end
+      else if (load_ops)
+	regA <= operand;
+      else if(alu_ops)
+	regA <= alu_result;
+      else if(branch_ops)
+        regA <= regA-1'b1;
+
 
    // register B (data memory pointer)
+
    always @(posedge clk, posedge rst)
      if(rst)
        regB <= 0;
-     else if (data_mem_addr == `RB && data_mem_we) 
+     else if (mem_addr == `RB && mem_we) 
        regB <= regA;
    
    // register C (processor flags)
@@ -164,12 +186,16 @@ module xctrl (
 
    //alu operation
    always @* begin
+      alu_result = 0;
+      alu_carry = 0;
+      alu_negative = 0;
+      alu_overflow = 0;
       if(alu_arith_ops) begin
          alu_result = adder_res_2;
          alu_carry = carry_n;
          alu_overflow = carry_n ^ carry_n_1;
          alu_negative = adder_res_2[`DATA_W-1];
-      end else if(opcode == `SHFT)
+      end else if(opcode == `shft)
         if(operand[`DATA_W-1]) begin //left shift by 1
            alu_result = regA << 1;
            alu_carry = regA[`DATA_W-1];
@@ -181,20 +207,18 @@ module xctrl (
            alu_overflow = 0;
            alu_negative = regA[`DATA_W-1];
         end
-      else if(opcode == `AND) begin
+      else if(opcode == `and) begin
          alu_result = and_res;
          alu_carry = 0;
          alu_negative = and_res[`DATA_W-1];
          alu_overflow = 0;
       end
-      else if(opcode == `XOR) begin
+      else if(opcode == `xor) begin
          alu_result = xor_res;
          alu_carry = 0;
          alu_negative = xor_res[`DATA_W-1];
          alu_overflow = 0;
-      end
-      
+      end   
    end
-   
    
 endmodule

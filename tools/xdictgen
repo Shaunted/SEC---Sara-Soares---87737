@@ -1,96 +1,38 @@
 #!/usr/bin/python
 
-#Description: generates a dictionary of symbols for the assembler
-#The .vh files directory should be included as an argument
-
+# generates a dictionary of symbols for the picoversat assembler
+# usage: xdictgen <vh_dir>
 
 lookup = {}
 
-#function to read the defs
-def read_def():
-    for line in f:
-        values = line.split("\n")
-        values = values[0].split(" ")
-        if values[0] == "`define":
-            if values[2].isdigit() == False:
-                if "'d" in line:
-                    const = line.split("'d")
-                    const = const[1].split(" ")
-                    lookup[values[1]] = int(const[0],10)
-                elif "'h" in line:
-                    const = line.split("'h")
-                    const = const[1].split(" ")
-                    lookup[values[1]] = int(const[0],16)
-                elif "-" in line:
-                    const = line.split("(")
-                    const = const[1].split(")")
-                    const = const[0].split("-")
-                    a = const[0].split("`")
-                    b = const[1].split("`")
-                    lookup[values[1]] = lookup[a[1]] - lookup[b[1]]
-                elif "+" in line:
-                    const = line.split("(")
-                    const = const[1].split(")")
-                    const = const[0].split("+")
-                    a = const[0].split("`")
-                    b = const[1].split("'b")
-                    lookup[values[1]] = lookup[a[1]] + int(b[1]) 
-                else:
-                    const = values[2].split("`")
-                    const = const[1].split("\n")
-                    lookup[values[1]] = lookup[const[0]]
-            else:
-                lookup[values[1]] = int(values[2])
-
-#function to read the ctrldefs (converts instr codes to lower case)
-def read_ctrldef():
-    for line in f:
-        values = line.split("\n")
-        values = values[0].split(" ")
-        if values[0] == "`define":
-            if values[2].isdigit() == False:
-                if "'h" in line:
-                    const = line.split("'h")
-                    const = const[1].split(" ")
-                    lookup[values[1].lower()] = int(const[0],16)
-                elif "-" in line:
-                    const = line.split("-")
-                    lookup[values[1]] = 2**lookup["ADDR_W"] - int(const[1])
-            else:
-                lookup[values[1]] = int(values[2])
-    print lookup
-
-import sys #used for reading the defs files path
+import sys
 if len(sys.argv) != 2:
     print("Number of arguments invalid! Use 2 arguments.")
     sys.exit()
 
 
-#####xdefs.vh#####
-
 f = open(sys.argv[1] + "/xdefs.vh", "r")
-read_def()
+
+define_list = f.readlines()
+
+for line in define_list:
+    if line[0:2] == '//' or line[0] == '\n':
+        continue
+    values = line.split(" ")
+    lookup[values[1]] = int(values[2])
+
+#insert registers
+for i in range(2**lookup["REGF_ADDR_W"]):
+    lookup['R'+str(i)] = lookup['REGF_BASE']+i
+
+#register B
+lookup['RB'] = lookup['REGF_BASE'] + 2**lookup["REGF_ADDR_W"]
+lookup['RC'] = lookup['REGF_BASE'] + 2**lookup["REGF_ADDR_W"] + 1
+
 f.close()
 
 
-#####xctrldefs.vh#####
-f = open(sys.argv[1] + "/xctrldefs.vh", "r")
-read_ctrldef()
-f.close()
-
-
-#####xprogdefs.vh#####
-f = open(sys.argv[1] + "/xprogdefs.vh", "r")
-read_def()
-f.close()
-
-
-#####xregfdefs.vh#####
-f = open(sys.argv[1] + "/xregfdefs.vh", "r")
-read_def()
-f.close()
-
-#Write dictionary
+# write dictionary
 xdict = open("xdict.json", "w")
 xdict.write('{\n')
 
@@ -98,10 +40,9 @@ xdict.write('{\n')
 for key,val in lookup.items():
     xdict.write('\"' + key + '\":' + str(val) + ',\n')
 
-#Aliases
+# aliases
 xdict.write('\"' + "nop" + '\":' + str(lookup["addi"]) + ',\n')
-xdict.write('\"' + "wrc" + '\":' + str(lookup["wrw"]) + ',\n')
 
 xdict.write('}\n')
 
-xdict.close() #close xdict
+xdict.close()

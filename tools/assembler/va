@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2.7
 #
 #    Versat Assembler (va)
 #
@@ -25,7 +25,14 @@ def getVal (s) :
     a = lookup.get(s)         # Get value or None if not in lookup
     if a == None :
         if s[:2] == "0x" or s[:2] == "0X":
-            b = int(s, 16) #hex number
+            b = int(s, 16) # hex number
+        elif s[0] == "\'" and s[2] == "\'":
+            b = ord(s[1]) # char
+            print b
+        elif s == "\'\\n\'":
+            b = ord('\n') # char
+        elif s == "\'\\r\'":
+            b = ord('\r') # char
         else :
             b = int(s)  #decimal a number
         a = b
@@ -94,6 +101,7 @@ def pass2 (program, PC, fout) :
         lin2 = lin.lstrip()
         lin2 = lin.split('#', 1)[0] #ignore comment at the end of line 
         lin2 = lin2.replace(',', ' ') #remove commas
+        lin2 = lin2.replace("\' \'", "0x20") #remove commas
         flds = string.split(lin2)
         if lin[0] == '#' : continue        # a comment line
         if lin[0] > ' ' : flds = flds[1:]  # drop symbol if there is one

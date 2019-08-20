@@ -1,21 +1,17 @@
 `timescale 1ns / 1ps
-
 `include "xdefs.vh"
-`include "xctrldefs.vh"
-`include "xprogdefs.vh"
-`include "xregfdefs.vh"
-
 
 module xtop (
-	     input                    clk,
-	     input                    rst,
-             output reg               trap,
+	     input                clk,
+	     input                rst,
+             output               trap,
 
-	     // native interface
-	     input [`REGF_ADDR_W-1:0] par_addr,
-	     input                    par_we,
-	     input [`DATA_W-1:0]      par_in,
-	     output [`DATA_W-1:0]     par_out
+	     // external parallel interface
+	     output [`ADDR_W-2:0] par_addr,
+	     input [`DATA_W-1:0]  par_in,
+             output               par_re, 
+	     output [`DATA_W-1:0] par_out,
+	     output               par_we
 	     );
 
    //
@@ -36,17 +32,26 @@ module xtop (
    wire [`DATA_W-1:0] 		  data_to_wr;
 
    
-   // SIGNALS FROM PERIPHERALS
-   reg 				  mem_sel;
+   // ADDRESS DECODER
+   wire                           mem_sel;
    wire [`DATA_W-1:0] 		  mem_data_to_rd;
    
-   reg 				  regf_sel;
+   wire				  regf_sel;
    wire [`DATA_W-1:0] 		  regf_data_to_rd;
 
+   wire                           ext_sel;
+   wire [`DATA_W-1:0]             ext_data_to_rd = par_in;
+ 
    
 `ifdef DEBUG
    reg 				  cprt_sel;
 `endif
+
+   //External interface
+   assign par_addr = data_addr[`ADDR_W-2:0];
+   assign par_re = ext_sel & ~data_we;
+   assign par_out = data_to_wr;
+   assign par_we = ext_sel & data_we;
    
    
    //
@@ -67,30 +72,12 @@ module xtop (
 		     .instruction(instruction),
 		     
 		     // mem data bus
-		     .data_mem_sel(data_sel),
-		     .data_mem_we (data_we), 
-		     .data_mem_addr(data_addr),
-		     .data_from_mem(data_to_rd), 
-		     .data_to_mem(data_to_wr)
+		     .mem_sel(data_sel),
+		     .mem_we (data_we), 
+		     .mem_addr(data_addr),
+		     .mem_data_from(data_to_rd), 
+		     .mem_data_to(data_to_wr)
 		     );
-
-   // HOST-CONTROLLER SHARED REGISTER FILE
-   xregf regf (
-	       .clk(clk),
-	       
-	       //host interface (external)
-	       .ext_we(par_we),
-	       .ext_addr(par_addr),
-	       .ext_data_in(par_in),
-	       .ext_data_out(par_out),
-			
-	       //versat interface (internal)
-	       .int_sel(regf_sel),
-	       .int_we(data_we),
-	       .int_addr(data_addr[`REGF_ADDR_W-1:0]),
-	       .int_data_in(data_to_wr),
-	       .int_data_out(regf_data_to_rd)
-	       );
 
    // MEMORY MODULE
    xram ram (
@@ -109,35 +96,45 @@ module xtop (
 	       );
 
 
+   // REGISTER FILE
+   xregf regf (
+	       .clk(clk),
+	       .sel(regf_sel),
+	       .we(data_we),
+	       .addr(data_addr[`REGF_ADDR_W-1:0]),
+	       .data_in(data_to_wr),
+	       .data_out(regf_data_to_rd)
+	       );
+
    // ADDRESS DECODER
 
-   wire                           trap_sel;
-   
    xaddr_decoder addr_decoder (
-	                       // address
-	                       .addr(data_addr[`ADDR_W-1 -: `SEL_ADDR_W]),
+	                       // input select and address
                                .sel(data_sel),
+	                       .addr(data_addr[`ADDR_W-1 -: `SEL_ADDR_W]),
                                
-                               // read ports
-                               .regf_data_to_rd(regf_data_to_rd),
-                               .mem_data_to_rd(mem_data_to_rd),
-                               
-                               // module select
+                               //memory 
 	                       .mem_sel(mem_sel),
+                               .mem_data_to_rd(mem_data_to_rd),
+
+                               //registers
 	                       .regf_sel(regf_sel),
-`ifdef DEBUG	
+                               .regf_data_to_rd(regf_data_to_rd),
+`ifdef DEBUG
+                               //debug char printer
 	                       .cprt_sel(cprt_sel),
 `endif
-                               .data_to_rd(data_to_rd),
-                               .trap_sel(trap_sel)
-                               );
-   
 
-   always @(posedge clk, posedge rst)
-     if(rst)
-       trap <= 0;
-     else if (trap_sel & data_we)
-       trap <= 1;
+                               //external
+                               .ext_sel(ext_sel),
+                               .ext_data_to_rd(ext_data_to_rd),
+
+                               //trap
+                               .trap_sel(trap),
+                               
+                               //data output 
+                               .data_to_rd(data_to_rd)
+                               );
    
    //
    //
@@ -148,7 +145,7 @@ module xtop (
 `ifdef DEBUG
    xcprint cprint (
 		   .clk(clk),
-		   .sel(cprt_sel),
+		   .sel(cprt_sel & data_we),
 		   .data_in(data_to_wr[7:0])
 		   );
 `endif
