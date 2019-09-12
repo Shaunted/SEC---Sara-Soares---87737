@@ -44,7 +44,7 @@ module xtop_tb;
       
 `ifdef DEBUG
       $dumpfile("xtop.vcd");
-      $dumpvars();
+      $dumpvars(0,xtop_tb);
 `endif
         
       // Initialize Inputs

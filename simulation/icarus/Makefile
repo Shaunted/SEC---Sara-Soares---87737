@@ -24,7 +24,7 @@ CFLAGS = -W all -I$(INCLUDE_DIR) -g2005-sv -D DEBUG
 #  PICOVERSAT SIMULATION
 #
 
-all: 
+all: a.out
 	./a.out
 
 a.out: $(SRC) $(HEX) $(XDEFS) $(TB)

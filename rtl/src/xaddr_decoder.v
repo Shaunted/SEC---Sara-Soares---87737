@@ -39,7 +39,6 @@ module xaddr_decoder (
       
       case (addr)
         `MEM_BASE>>(`ADDR_W-`SEL_ADDR_W): mem_sel = sel;
-        0: mem_sel = sel;
         `REGF_BASE>>(`ADDR_W-`SEL_ADDR_W): regf_sel = sel;
 `ifdef DEBUG
         `CPRT_BASE>>(`ADDR_W-`SEL_ADDR_W): cprt_sel = sel;

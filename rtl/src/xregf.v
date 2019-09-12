@@ -11,12 +11,12 @@ module xregf (
 	      );
 
    // register file
-   reg [`DATA_W-1:0] 				regf [2**`REGF_ADDR_W-1:0];
+   reg [`DATA_W-1:0]                   regf [2**`REGF_ADDR_W-1:0];
 
-   assign data_out = regf[addr];
+   assign data_out = sel? regf[addr] : `DATA_W'h0;
    
    always @ (posedge clk)
-      if (we)
+      if (sel && we)
 	 regf[addr] <= data_in;
 
 endmodule
