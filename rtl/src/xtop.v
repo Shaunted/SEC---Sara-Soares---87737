@@ -111,7 +111,7 @@ module xtop (
    xaddr_decoder addr_decoder (
 	                       // input select and address
                                .sel(data_sel),
-	                       .addr(data_addr[`ADDR_W-1 -: `SEL_ADDR_W]),
+	                       .addr(data_addr),
                                
                                //memory 
 	                       .mem_sel(mem_sel),

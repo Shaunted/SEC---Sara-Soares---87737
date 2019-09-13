@@ -12,7 +12,7 @@
 `define SEL_ADDR_W 3
 
 // REGISTER FILE ADDRESS WIDTH
-`define REGF_ADDR_W 4 //2**4 = 16 registers
+
 
 // DEBUG: USE PRINTER AND GENERATE VCD FILE
 //`define DEBUG
@@ -22,9 +22,16 @@
 //
 
 `define MEM_BASE 0 //instruction and data memory
-`define REGF_BASE 8192 //registers 0x2000
-`define CPRT_BASE 12288 //printer 0x3000
-`define EXT_BASE 16384 //external hw 0x4000
+`define MEM_ADDR_W 14 //16k positions (64kB)
+
+`define REGF_BASE 16384 //registers 0x4000
+`define REGF_ADDR_W 4 //2**4 = 16 registers
+
+`define CPRT_BASE 20480 //0x5000
+`define CPRT_ADDR_W 0 //only one address
+
+`define TRAP_BASE 32767 
+
 
 
 // Instruction width 

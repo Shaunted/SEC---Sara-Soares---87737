@@ -1,32 +1,32 @@
 `timescale 1ns / 1ps
 module xaddr_decoder (
 	             // address and global select signal
-	              input [`SEL_ADDR_W-1:0] addr,
-                      input                   sel,
+	              input [`ADDR_W-1:0] addr,
+                      input               sel,
              
                       // ports
 
                       //memory
-	              output reg              mem_sel,
-                      input [31:0]            mem_data_to_rd,
+	              output reg          mem_sel,
+                      input [31:0]        mem_data_to_rd,
 
-	              output reg              regf_sel,
-                      input [31:0]            regf_data_to_rd,
+	              output reg          regf_sel,
+                      input [31:0]        regf_data_to_rd,
 
 `ifdef DEBUG	
-	              output reg              cprt_sel,
+	              output reg          cprt_sel,
 
 `endif
-                      output reg              ext_sel,
-                      input [31:0]            ext_data_to_rd,
+                      output reg          ext_sel,
+                      input [31:0]        ext_data_to_rd,
                       
-                      output reg              trap_sel,
+                      output reg          trap_sel,
 
                       //read port
-                      output reg [31:0]       data_to_rd
+                      output reg [31:0]   data_to_rd
                      );
 
-
+   
    //select module
    always @ * begin
       mem_sel = 1'b0;
@@ -36,16 +36,18 @@ module xaddr_decoder (
 `endif
       ext_sel = 1'b0;
       trap_sel = 1'b0;
-      
-      case (addr)
-        `MEM_BASE>>(`ADDR_W-`SEL_ADDR_W): mem_sel = sel;
-        `REGF_BASE>>(`ADDR_W-`SEL_ADDR_W): regf_sel = sel;
+
+      //mask offset and compare with base
+      if ( (addr & {  {`ADDR_W-`MEM_ADDR_W{1'b1}}, {`MEM_ADDR_W{1'b0}}  }) == `MEM_BASE)
+        mem_sel = sel;
+      else if ( (addr & {  {`ADDR_W-`REGF_ADDR_W{1'b1}}, {`REGF_ADDR_W{1'b0}}  }) == `REGF_BASE)
+        regf_sel = sel;
 `ifdef DEBUG
-        `CPRT_BASE>>(`ADDR_W-`SEL_ADDR_W): cprt_sel = sel;
+      else if ( (addr &  {  {`ADDR_W-`CPRT_ADDR_W{1'b1}}, {`CPRT_ADDR_W{1'b0}}  }) == `CPRT_BASE)
+        cprt_sel = sel;
  `endif
-        `EXT_BASE >>(`ADDR_W-`SEL_ADDR_W): ext_sel = sel;
-        default: trap_sel = sel;
-      endcase
+      else
+          trap_sel = sel;
    end
 
    //select data to read
