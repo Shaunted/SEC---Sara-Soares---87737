@@ -1,0 +1,6 @@
+#comment
+ldi 1
+wrw LED_BASE
+ldi 0x35
+wrw CPRT_BASE
+wrw 0x7fff
