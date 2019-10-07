@@ -1,0 +1,48 @@
+#!/usr/bin/python2.7
+
+# generates a dictionary of symbols for the picoversat assembler
+# usage: xdictgen <vh_dir>
+
+lookup = {}
+
+import sys
+if len(sys.argv) != 2:
+    print("Number of arguments invalid! Use 2 arguments.")
+    sys.exit()
+
+
+f = open(sys.argv[1] + "/xdefs.vh", "r")
+
+define_list = f.readlines()
+
+for line in define_list:
+    if line[0:2] == '//' or line[0] == '\n':
+        continue
+    values = line.split(" ")
+    lookup[values[1]] = int(values[2])
+
+#insert registers
+for i in range(2**lookup["REGF_ADDR_W"]):
+    lookup['R'+str(i)] = lookup['REGF_BASE']+i
+
+#register B
+lookup['RB'] = lookup['REGF_BASE'] + 2**lookup["REGF_ADDR_W"]
+lookup['RC'] = lookup['REGF_BASE'] + 2**lookup["REGF_ADDR_W"] + 1
+
+f.close()
+
+
+# write dictionary
+xdict = open("xdict.json", "w")
+xdict.write('{\n')
+
+
+for key,val in lookup.items():
+    xdict.write('\"' + key + '\":' + str(val) + ',\n')
+
+# aliases
+xdict.write('\"' + "nop" + '\":' + str(lookup["addi"]) + ',\n')
+
+xdict.write('}\n')
+
+xdict.close()

@@ -1,0 +1,90 @@
+# 
+# Hello World!
+#
+#	a simple picoVersat program
+#
+#   assign regC = {negative, overflow, {(`DATA_W-3){1'b0}}, carry};
+
+#test carry
+        ldi 1
+        wrw R0
+        ldi -1
+        addi -1
+        rdw RC
+        and R0
+        bneqi neg
+        ldi 'c'
+        wrw CPRT_BASE
+        ldi '\n'
+        wrw CPRT_BASE
+        bneqi end
+
+
+#test negative
+neg     ldi 4
+        wrw R0
+        ldi -1
+        addi -1
+        rdw RC
+        and R0
+        bneqi ov
+        ldi 'n'
+        wrw CPRT_BASE
+        ldi '\n'
+        wrw CPRT_BASE
+        bneqi end
+
+
+#test overflow
+ov      ldi 2
+        wrw R0
+        ldi 0xffff
+        ldih 0x7fff
+        wrw R1
+        add R1
+        rdw RC
+        and R0
+        bneqi pr
+        ldi 'o'
+        wrw CPRT_BASE
+        ldi '\n'        
+        wrw CPRT_BASE
+        bneqi end
+
+# set R1 as test variable
+	ldi 1
+	wrw R1
+
+#set numbers to multiply
+#a=R3=3 and b=R2=2
+        ldi 3
+        wrw R3
+        ldi 2
+        wrw R2
+
+#Check if LSB is 0 or 1 and if the process if over or not
+test    rdw R2
+        and R1
+        bneqi loop
+        rdw R3
+        shft left
+        wrw R3
+test2   rdw R2
+        shft right
+        beqi end
+        bneqi test
+
+
+
+#multiplication loop
+loop    rdw R3
+        add R3
+        wrw R3
+        bneqi test2
+
+        
+#finish by writing product and writing to invalid address to activate trap
+end	rdw R3
+        wrw NPRT_BASE
+        wrw 0x7fff
+        

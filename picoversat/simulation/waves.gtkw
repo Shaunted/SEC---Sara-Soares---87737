@@ -1,0 +1,89 @@
+[*]
+[*] GTKWave Analyzer v3.3.61 (w)1999-2014 BSI
+[*] Tue Feb 19 11:04:14 2019
+[*]
+[dumpfile] "/home/jsousa/sandbox/picoversat/rtl/xtop.vcd"
+[dumpfile_mtime] "Tue Feb 19 10:51:58 2019"
+[dumpfile_size] 82311
+[savefile] "/home/jsousa/sandbox/picoversat/simulation/waves.gtkw"
+[timestart] 0
+[size] 3840 1932
+[pos] -1 -1
+*-16.913851 279000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] xtop_tb.
+[treeopen] xtop_tb.uut.
+[sst_width] 453
+[signals_width] 678
+[sst_expanded] 1
+[sst_vpaned_height] 559
+@200
+-testbench
+@28
+xtop_tb.clk
+@22
+xtop_tb.k[31:0]
+xtop_tb.par_addr[3:0]
+xtop_tb.par_in[31:0]
+xtop_tb.par_out[31:0]
+@28
+xtop_tb.par_we
+@22
+xtop_tb.r0[31:0]
+xtop_tb.r1[31:0]
+xtop_tb.r2[31:0]
+xtop_tb.r3[31:0]
+xtop_tb.r4[31:0]
+xtop_tb.r5[31:0]
+xtop_tb.r6[31:0]
+xtop_tb.r7[31:0]
+xtop_tb.r8[31:0]
+xtop_tb.r9[31:0]
+xtop_tb.r10[31:0]
+xtop_tb.r11[31:0]
+xtop_tb.r12[31:0]
+xtop_tb.r13[31:0]
+xtop_tb.r14[31:0]
+xtop_tb.r15[31:0]
+@28
+xtop_tb.rst
+@22
+xtop_tb.start_time[31:0]
+@200
+-core
+@28
+xtop_tb.uut.clk
+xtop_tb.uut.cprt_sel
+@22
+xtop_tb.uut.data_addr[9:0]
+@28
+xtop_tb.uut.data_sel
+@22
+xtop_tb.uut.data_to_rd[31:0]
+xtop_tb.uut.data_to_wr[31:0]
+@28
+xtop_tb.uut.data_we
+@22
+xtop_tb.uut.pc[8:0]
+xtop_tb.uut.instruction[31:0]
+xtop_tb.uut.par_addr[3:0]
+xtop_tb.uut.par_in[31:0]
+xtop_tb.uut.par_out[31:0]
+@28
+xtop_tb.uut.par_we
+@22
+xtop_tb.uut.prog_data_to_rd[31:0]
+@28
+xtop_tb.uut.prog_sel
+@22
+xtop_tb.uut.regf_data_to_rd[31:0]
+@28
+xtop_tb.uut.regf_sel
+xtop_tb.uut.rst
+@200
+-controller
+@22
+xtop_tb.uut.controller.regA[31:0]
+@23
+xtop_tb.uut.controller.regB[31:0]
+[pattern_trace] 1
+[pattern_trace] 0

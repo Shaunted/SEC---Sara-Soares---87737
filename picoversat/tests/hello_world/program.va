@@ -1,0 +1,92 @@
+# 
+# Hello World!
+#
+#	a simple picoVersat program
+#
+#   assign regC = {negative, overflow, {(`DATA_W-3){1'b0}}, carry};
+
+#test carry
+        ldi 1
+        wrw R0
+        ldi -1
+        addi -1
+        rdw RC
+        and R0
+        bneqi neg
+        ldi 'c'
+        wrw CPRT_BASE
+        ldi '\n'
+        wrw CPRT_BASE
+        bneqi end
+
+
+#test negative
+neg     ldi 4
+        wrw R0
+        ldi -1
+        addi -1
+        rdw RC
+        and R0
+        bneqi ov
+        ldi 'n'
+        wrw CPRT_BASE
+        ldi '\n'
+        wrw CPRT_BASE
+        bneqi end
+
+
+#test overflow
+ov      ldi 2
+        wrw R0
+        ldi 0xffff
+        ldih 0x7fff
+        wrw R1
+        add R1
+        rdw RC
+        and R0
+        bneqi pr
+        ldi 'o'
+        wrw CPRT_BASE
+        ldi '\n'
+        wrw CPRT_BASE
+        bneqi end
+
+# set R1 iterator 	
+pr	ldi 15
+	wrw R1
+	
+# set RB to point to first char
+        ldi c0
+	wrw RB
+
+# read string from memory and write to char printer 
+loop 	rdwb
+	rdwb            #need to read twice due to memory 1 cycle delay
+	wrw CPRT_BASE
+	rdw RB          #load pointer
+	addi 1	        #increment by 1
+	wrw RB          #store incremented pointer
+	rdw R1          #load iterator
+	bneqi loop      #go back to loop if non-zero, regA is decremented
+	wrw R1          #stores back decremented iterator
+        
+#finish by writing to invalid address to activate trap
+end	wrw 0x7fff
+        
+# char ascii constants placed here	
+c0	.memset '\n'
+	.memset 'H'
+	.memset 'e'
+	.memset 'l'
+	.memset 'l'
+	.memset 'o'
+	.memset ' '
+	.memset 'W'
+	.memset 'o'
+	.memset 'r'
+	.memset 'l'
+	.memset 'd'
+	.memset '!'
+	.memset '\n'
+	.memset '\r'
+	.memset '\n'
