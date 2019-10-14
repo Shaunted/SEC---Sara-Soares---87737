@@ -62,7 +62,7 @@ CLA_node nodeB0(
     .G(g[4])
 );
 
-CLA_node nodeB0(
+CLA_node nodeB1(
     .p(p[3:2]),
     .g(g[3:2]),
     .ci(cout[1]),
@@ -71,7 +71,7 @@ CLA_node nodeB0(
     .G(g[5])
 );
 
-CLA_node nodeB0(
+CLA_node nodeB2(
     .p(p[5:4]),
     .g(g[5:4]),
     .ci(ci),

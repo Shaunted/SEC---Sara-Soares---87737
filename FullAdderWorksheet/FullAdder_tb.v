@@ -34,8 +34,6 @@ module FullAdder_tb;
       $finish;
 
    end
-   
-   
 
 endmodule
 
