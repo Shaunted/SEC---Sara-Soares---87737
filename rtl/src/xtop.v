@@ -28,7 +28,7 @@ module xtop (
    wire 			  data_sel;
    wire 			  data_we;
    wire [`ADDR_W-1:0] 		  data_addr;
-   reg [`DATA_W-1:0] 		  data_to_rd;
+   wire [`DATA_W-1:0] 		  data_to_rd;
    wire [`DATA_W-1:0] 		  data_to_wr;
 
    

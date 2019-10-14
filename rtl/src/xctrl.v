@@ -13,8 +13,8 @@ module xctrl (
 	      input [`INSTR_W-1:0]     instruction,
 	      
 	      // data memory interface 
-	      output reg               mem_sel,
-	      output reg               mem_we,
+	      output                   mem_sel,
+	      output                   mem_we,
 	      output reg [`ADDR_W-1:0] mem_addr,
 	      input [`DATA_W-1:0]      mem_data_from,
 	      output [`DATA_W-1:0]     mem_data_to

@@ -1,4 +1,6 @@
+`include "xdefs.vh"
 `timescale 1ns / 1ps
+
 module xaddr_decoder (
 	             // address and global select signal
 	              input [`ADDR_W-1:0] addr,
