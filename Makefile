@@ -13,6 +13,11 @@ else
 endif
 
 fpga:
+ifeq ($(test),)
+	make -C fpga/xilinx/14.7/picoversat
+else
+	make -C fpga/xilinx/14.7/picoversat test=$(test)
+endif
 
 clean:
 ifeq ($(test),)
