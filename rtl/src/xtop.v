@@ -1,17 +1,20 @@
 `timescale 1ns / 1ps
 `include "xdefs.vh"
 
+
 module xtop (
 	     input                clk,
 	     input                rst,
-             output               trap,
+             output               trap
 
+`ifndef NO_EXT
 	     // external parallel interface
-	     output [`ADDR_W-2:0] par_addr,
+	     , output [`ADDR_W-2:0] par_addr,
 	     input [`DATA_W-1:0]  par_in,
              output               par_re, 
 	     output [`DATA_W-1:0] par_out,
 	     output               par_we
+`endif
 	     );
 
    //
@@ -39,26 +42,22 @@ module xtop (
    wire				  regf_sel;
    wire [`DATA_W-1:0] 		  regf_data_to_rd;
 
-   wire                           ext_sel;
-   wire [`DATA_W-1:0]             ext_data_to_rd = par_in;
- 
    
 `ifdef DEBUG
    reg 				  cprt_sel;
 `endif
 
+`ifndef NO_EXT
+   wire                           ext_sel;
+   wire [`DATA_W-1:0]             ext_data_to_rd = par_in;
+ 
    //External interface
    assign par_addr = data_addr[`ADDR_W-2:0];
    assign par_re = ext_sel & ~data_we;
    assign par_out = data_to_wr;
    assign par_we = ext_sel & data_we;
+`endif
    
-   
-   //
-   //
-   // FIXED SUBMODULES
-   //
-   //
    
    //
    // CONTROLLER MODULE
@@ -106,7 +105,7 @@ module xtop (
 	       .data_out(regf_data_to_rd)
 	       );
 
-   // ADDRESS DECODER
+   // INTERNAL ADDRESS DECODER
 
    xaddr_decoder addr_decoder (
 	                       // input select and address
@@ -125,9 +124,11 @@ module xtop (
 	                       .cprt_sel(cprt_sel),
 `endif
 
+`ifndef NO_EXT
                                //external
                                .ext_sel(ext_sel),
                                .ext_data_to_rd(ext_data_to_rd),
+`endif
 
                                //trap
                                .trap_sel(trap),

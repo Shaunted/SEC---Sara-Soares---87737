@@ -14,12 +14,13 @@ module xtop_tb;
    reg rst;
    wire trap;
    
-
-   //exteranl parallel interface
+`ifndef NO_EXT
+   //external parallel interface
    wire [`ADDR_W-2:0] par_addr;
    wire               par_we;
    reg [`DATA_W-1:0]  par_in;
    wire [`DATA_W-1:0] par_out;
+`endif
 
    //iterator and timer
    integer 		   k, start_time;
@@ -31,13 +32,15 @@ module xtop_tb;
    xtop uut (
 	     .clk(clk),
              .rst(rst),
-             .trap(trap),
+             .trap(trap)
 	     
+`ifndef NO_EXT
    	     // external parallel interface
-	     .par_addr(par_addr),
+	     , .par_addr(par_addr),
 	     .par_we(par_we),
 	     .par_in(par_in),
 	     .par_out(par_out)
+`endif
 	     );
    
    initial begin
@@ -51,9 +54,6 @@ module xtop_tb;
       clk = 1;
       rst = 0;  
       
-      // Initialize parallel interface
-      par_in = 0;
-
      // assert reset for 1 clock cycle
       #(clk_period+1)
       rst = 1;
@@ -83,6 +83,7 @@ module xtop_tb;
    always @(posedge clk)
      if(trap) begin 
         $display("Catched Trap at time  %0d clock cycles:",($time-start_time)/clk_period);
+        $display("%s address %d, PC 0x%x", uut.data_we? "Write": "Read", uut.data_addr, uut.pc);
         $finish;
      end 
 

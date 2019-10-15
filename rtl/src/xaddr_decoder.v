@@ -17,10 +17,12 @@ module xaddr_decoder (
 
 `ifdef DEBUG	
 	              output reg          cprt_sel,
-
 `endif
+
+`ifndef NO_EXT
                       output reg          ext_sel,
                       input [31:0]        ext_data_to_rd,
+`endif
                       
                       output reg          trap_sel,
 
@@ -30,13 +32,15 @@ module xaddr_decoder (
 
    
    //select module
-   always @ * begin
+   always @* begin
       mem_sel = 1'b0;
       regf_sel = 1'b0;
 `ifdef DEBUG
       cprt_sel = 1'b0;
 `endif
+`ifndef NO_EXT
       ext_sel = 1'b0;
+`endif
       trap_sel = 1'b0;
 
       //mask offset and compare with base
@@ -53,15 +57,17 @@ module xaddr_decoder (
    end
 
    //select data to read
-   always @ * begin
+   always @(*) begin
       data_to_rd = `DATA_W'd0;
 
       if(mem_sel)
         data_to_rd = mem_data_to_rd;
       else if(regf_sel)
         data_to_rd = regf_data_to_rd;
+`ifndef NO_EXT
       else if(ext_sel)
         data_to_rd = ext_data_to_rd;
+`endif
    end
 
 endmodule

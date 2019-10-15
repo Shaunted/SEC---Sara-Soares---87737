@@ -25,7 +25,7 @@ module xctrl (
    wire signed [`DATA_W-1:0] 		  imm;
 
    //operand 
-   wire [`DATA_W-1:0] 			  operand;
+   reg [`DATA_W-1:0] 			  operand;
    
    //register A (accumulator)   
    reg [`DATA_W-1:0] 			  regA;
@@ -34,10 +34,10 @@ module xctrl (
    reg [`DATA_W-1:0] 			  regB;
 
    //register C
-   reg [`DATA_W-1:0] 			  regC;
+   reg [2:0]                              regC;
  				  
    //alu
-   reg [`DATA_W:0]                        alu_result;
+   reg [`DATA_W-1:0]                      alu_result;
    reg                                    alu_carry;
    reg                                    alu_overflow;
    reg                                    alu_negative;
@@ -99,22 +99,19 @@ module xctrl (
    
 
    // operand selection 
-   reg [`DATA_W-1:0]                     operand_int;
    always @ * begin
-      operand_int = 0;
+      operand = 0;
       if(load_ops || alu_ops) begin
          if (mem_addr == (`RB))
-           operand_int = regB;
+           operand = regB;
          else if (mem_addr == (`RC))
-	   operand_int = regC;
+	   operand = regC | 0;
          else if (imm_ops)
-           operand_int = imm;
+           operand = imm;
          else if (mem_sel)
-           operand_int = mem_data_from;
+           operand = mem_data_from;
       end
    end
-
-   assign operand = (opcode == `sub)? -operand_int: operand_int;
    
 
    // program counter 
@@ -167,20 +164,39 @@ module xctrl (
    // register C (processor flags)
    always @(posedge clk, posedge rst)
       if(rst)
-        regC <= 0;
+        regC <= 3'b0;
       else if (alu_ops)
-        regC <= {alu_negative, alu_overflow, alu_carry} | 0;
+        regC <= {alu_negative, alu_overflow, alu_carry};
       
    //
    // ALU
    //
       
-   wire [`DATA_W-1:0] adder_res_1 = regA[`DATA_W-2:0] + operand[`DATA_W-2:0];
-   wire [`DATA_W:0]   adder_res_2 = regA + operand;
-   
-   wire carry_n_1 = adder_res_1[`DATA_W-1];
-   wire carry_n = adder_res_2[`DATA_W];
+   reg [`DATA_W-1:0] carry_res_n_1;
+   reg               carry_res_n;
+ 
+   reg [`DATA_W-1:0] adder_res;
 
+   always @*
+     if(opcode == `sub)
+       carry_res_n_1 = {1'b0, regA[`DATA_W-2:0]} - {1'b0,operand[`DATA_W-2:0]};
+     else
+       carry_res_n_1 = {1'b0, regA[`DATA_W-2:0]} + {1'b0,operand[`DATA_W-2:0]};
+
+   always @*
+     if(opcode == `sub)
+       carry_res_n = (regA[`DATA_W-1] & ~operand[`DATA_W-1]) +  (regA[`DATA_W-1] ^ ~operand[`DATA_W-1]) & carry_res_n_1[`DATA_W-1];
+     else
+       carry_res_n = (regA[`DATA_W-1] & operand[`DATA_W-1]) +  (regA[`DATA_W-1] ^ operand[`DATA_W-1]) & carry_res_n_1[`DATA_W-1];
+
+
+   always @*
+     if(opcode == `sub)
+       adder_res = carry_res_n_1 + {regA[`DATA_W-1], {`DATA_W-1{1'b0}}} - {operand[`DATA_W-1],{`DATA_W-1{1'b0}}};
+     else
+       adder_res = carry_res_n_1 + {regA[`DATA_W-1], {`DATA_W-1{1'b0}}} + {operand[`DATA_W-1],{`DATA_W-1{1'b0}}};
+
+   
    wire [`DATA_W-1:0] and_res = regA & operand;
    wire [`DATA_W-1:0] xor_res = regA ^ operand;
 
@@ -191,10 +207,10 @@ module xctrl (
       alu_negative = 0;
       alu_overflow = 0;
       if(alu_arith_ops) begin
-         alu_result = adder_res_2;
-         alu_carry = carry_n;
-         alu_overflow = carry_n ^ carry_n_1;
-         alu_negative = adder_res_2[`DATA_W-1];
+         alu_result = adder_res[`DATA_W-1:0];
+         alu_carry = carry_res_n;
+         alu_overflow = carry_res_n ^ carry_res_n_1[`DATA_W-1];
+         alu_negative = adder_res[`DATA_W-1];
       end else if(opcode == `shft)
         if(operand[`DATA_W-1]) begin //left shift by 1
            alu_result = regA << 1;

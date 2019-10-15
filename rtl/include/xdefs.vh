@@ -6,7 +6,7 @@
 `define DATA_W 32 // bits
 
 // ADDRESS WIDTH
-`define ADDR_W 15
+`define ADDR_W 10
 
 // MODULE SELECT ADDR WIDTH
 `define SEL_ADDR_W 3
@@ -22,17 +22,17 @@
 //
 
 `define MEM_BASE 0 //instruction and data memory
-`define MEM_ADDR_W 14 //16k positions (64kB)
+`define MEM_ADDR_W 9 //512 positions (2kB)
 
-`define REGF_BASE 16384 //registers 0x4000
+`define REGF_BASE 512 //registers 0x4000
 `define REGF_ADDR_W 4 //2**4 = 16 registers
 
-`define CPRT_BASE 20480 //0x5000
+`define CPRT_BASE 600 //0x5000
 `define CPRT_ADDR_W 0 //only one address
 
-`define TRAP_BASE 32767 
+`define NO_EXT 1
 
-
+`define TRAP_BASE 1023
 
 // Instruction width 
 `define INSTR_W 32
