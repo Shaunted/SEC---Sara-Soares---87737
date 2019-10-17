@@ -1,0 +1,69 @@
+$date
+	Thu Oct 17 14:52:18 2019
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module RCM_tb $end
+$var wire 4 ! s [3:0] $end
+$var reg 2 " a [1:0] $end
+$var reg 2 # b [1:0] $end
+$scope module uut $end
+$var wire 2 $ a [1:0] $end
+$var wire 2 % b [1:0] $end
+$var wire 1 & ci $end
+$var wire 4 ' s [3:0] $end
+$var wire 1 ( c $end
+$scope module halfadder0 $end
+$var wire 1 ) a $end
+$var wire 1 * axb $end
+$var wire 1 + b $end
+$var wire 1 & ci $end
+$var wire 1 ( co $end
+$var wire 1 , s $end
+$upscope $end
+$scope module halfadder1 $end
+$var wire 1 - a $end
+$var wire 1 . axb $end
+$var wire 1 ( b $end
+$var wire 1 & ci $end
+$var wire 1 / co $end
+$var wire 1 0 s $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+00
+0/
+0.
+0-
+1,
+1+
+1*
+0)
+0(
+b10 '
+0&
+b10 %
+b1 $
+b10 #
+b1 "
+b10 !
+$end
+#10000
+0,
+b100 !
+b100 '
+10
+0*
+1.
+0+
+1-
+b10 "
+b10 $
+#20000

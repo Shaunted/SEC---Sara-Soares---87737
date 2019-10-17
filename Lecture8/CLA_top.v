@@ -79,3 +79,5 @@ CLA_node nodeB2(
     .P(p[6]),
     .G(g[6])
 );
+
+endmodule
