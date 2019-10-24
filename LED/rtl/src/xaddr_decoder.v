@@ -49,7 +49,7 @@ module xaddr_decoder (
       else if ( (addr & {  {`ADDR_W-`REGF_ADDR_W{1'b1}}, {`REGF_ADDR_W{1'b0}}  }) == `REGF_BASE)
         regf_sel = sel;
 `ifndef NO_EXT
-      else if ( (addr & {  {`ADDR_W-`   EXT_ADDR_W{1'b1}}, {`EXT_ADDR_W{1'b0}}  }) == `EXT_BASE)
+      else if ( (addr & {  {`ADDR_W-`EXT_ADDR_W{1'b1}}, {`EXT_ADDR_W{1'b0}}  }) == `EXT_BASE)
         ext_sel = sel;
 `endif
 `ifdef DEBUG

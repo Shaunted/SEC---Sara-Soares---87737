@@ -4,7 +4,7 @@ NET "clk"  LOC = "B8";
 NET "rst"  LOC = "G12";
 
 # LED
-NET "led"  LOC = "M5";
+#NET "led<0>"  LOC = "M5";
 
 # Pin assignment for SWs
 #NET "sw<7>" LOC = "N3";  # Bank = 2, Signal name = SW7

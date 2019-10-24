@@ -1,0 +1,78 @@
+$date
+	Thu Oct 24 14:52:11 2019
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module signed_div_tb $end
+$var wire 4 ! c [3:0] $end
+$var reg 4 " a [3:0] $end
+$var reg 4 # b [3:0] $end
+$var reg 1 $ clk $end
+$var reg 1 % rst $end
+$var reg 1 & start $end
+$scope module div0 $end
+$var wire 4 ' D [3:0] $end
+$var wire 4 ( D1 [3:0] $end
+$var wire 1 $ clk $end
+$var wire 4 ) d [3:0] $end
+$var wire 1 % rst $end
+$var wire 1 & start $end
+$var wire 4 * qout [3:0] $end
+$var reg 8 + RD [7:0] $end
+$var reg 4 , d1 [3:0] $end
+$var reg 4 - q [3:0] $end
+$var reg 4 . r [3:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+bz .
+b0 -
+b0 ,
+b0 +
+b0 *
+b1010 )
+bz (
+b10 '
+0&
+1%
+1$
+b10 #
+b1010 "
+b0 !
+$end
+#10000
+0$
+#20000
+1$
+#21000
+0%
+#30000
+0$
+#40000
+bz0000000 +
+1$
+#41000
+1&
+#50000
+0$
+#60000
+b10 !
+b10 *
+b10 +
+b1010 ,
+1$
+#61000
+0&
+#70000
+0$
+#80000
+b0 !
+b0 *
+bz0100000 +
+1$
