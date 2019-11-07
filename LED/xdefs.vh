@@ -32,6 +32,10 @@
 
 `define EXT_BASE 768
 `define EXT_ADDR_W 7
+`define LED_BASE 768
+`define LED_ADDR_W 7
+
+`define NO_EXT
 
 `define TRAP_BASE 1023
 

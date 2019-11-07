@@ -13,6 +13,7 @@ module xtop_tb;
    reg clk;
    reg rst;
    wire trap;
+   reg led;
    
 `ifndef NO_EXT
    //external parallel interface
@@ -32,7 +33,8 @@ module xtop_tb;
    xtop uut (
 	     .clk(clk),
              .rst(rst),
-             .trap(trap)
+             .trap(trap),
+             .led(led)
 	     
 `ifndef NO_EXT
    	     // external parallel interface

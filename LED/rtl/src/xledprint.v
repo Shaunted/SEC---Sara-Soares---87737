@@ -3,9 +3,9 @@
 
 module xledprint (
 		input 	    clk,
-		input				rst,
+		input		rst,
 		input 	    sel,
-		input				data_in,
+		input		data_in,
 		output	reg		led
 		);
 

@@ -48,10 +48,6 @@ module xaddr_decoder (
         mem_sel = sel;
       else if ( (addr & {  {`ADDR_W-`REGF_ADDR_W{1'b1}}, {`REGF_ADDR_W{1'b0}}  }) == `REGF_BASE)
         regf_sel = sel;
-`ifndef NO_EXT
-      else if ( (addr & {  {`ADDR_W-`   EXT_ADDR_W{1'b1}}, {`EXT_ADDR_W{1'b0}}  }) == `EXT_BASE)
-        ext_sel = sel;
-`endif
 `ifdef DEBUG
       else if ( (addr &  {  {`ADDR_W-`CPRT_ADDR_W{1'b1}}, {`CPRT_ADDR_W{1'b0}}  }) == `CPRT_BASE)
         cprt_sel = sel;

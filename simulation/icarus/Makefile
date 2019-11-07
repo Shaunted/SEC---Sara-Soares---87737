@@ -4,12 +4,12 @@ TESTS_DIR := ../../tests
 test := hello_world
 
 #rtl files
-INCLUDE_DIR := rtl/include
-SRC_DIR := rtl/src
+INCLUDE_DIR := ../../rtl/include
+SRC_DIR := ../../rtl/src
 
 XDEFS := $(wildcard $(INCLUDE_DIR)/*.vh)
 SRC := $(wildcard $(SRC_DIR)/*.v) 
-TB := rtl/testbench/xtop_tb.v
+TB := ../../rtl/testbench/xtop_tb.v
 
 
 #icarus verilog

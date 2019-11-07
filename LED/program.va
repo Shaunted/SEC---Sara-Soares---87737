@@ -2,3 +2,6 @@
     wrw EXT_BASE
     ldi 0x35
     wrw 0x7fff
+    ldi 0
+end beqi end
+    nop

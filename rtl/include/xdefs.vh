@@ -24,14 +24,13 @@
 `define MEM_BASE 0 //instruction and data memory
 `define MEM_ADDR_W 9 //512 positions (2kB)
 
-`define REGF_BASE 512 
+`define REGF_BASE 512 //registers 0x4000
 `define REGF_ADDR_W 4 //2**4 = 16 registers
 
-`define CPRT_BASE 528 
+`define CPRT_BASE 600 //0x5000
 `define CPRT_ADDR_W 0 //only one address
 
-`define EXT_BASE 768
-`define EXT_ADDR_W 7
+`define NO_EXT 1
 
 `define TRAP_BASE 1023
 

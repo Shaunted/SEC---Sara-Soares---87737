@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python
 
 # generates a dictionary of symbols for the picoversat assembler
 # usage: xdictgen <vh_dir>
