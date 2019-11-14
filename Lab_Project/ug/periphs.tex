@@ -2,14 +2,47 @@
 \label{sec:periphs}
 
 The Basys2 has manny peripherals options such as:
--7 segments display
+-7-segments display
 -on/off switch
 -push buttons
 -VGA port
 -PS/2 port
 -6-pin headers
 
-\subsection{Peripherals used}
+\subsection{Peripherals Used}
 
-The peripherals that we will de using are the 7 segments display and the push buttons.
+The peripherals that we will de using are the 7-segments display and the push buttons.
+
+
+\subsection{7-Segments Display}
+
+\begin{table}[h]
+\centering
+\caption{7-Segments Display.}
+\sffamily
+    \begin{tabular}{|c|c|c|p{10cm}|}
+        \hline
+        \textbf{Name} & \textbf{Address} & \textbf{Bits} & \textbf{Description} \\ [0.5ex]
+        \hline
+        \hline
+        BUTTONS\_BASE &  & 11:0 & 4 7-segments display with 8 bits[7:0] for each display and 4 bits[11:8] to select the display \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\subsection{Push Buttons}
+
+\begin{table}[h]
+\centering
+\caption{Push Buttons.}
+\sffamily
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \textbf{Name} & \textbf{Address} & \textbf{Bits} & \textbf{Description} \\ [0.5ex]
+        \hline
+        \hline
+        BUTTONS\_BASE &  & 3:0 & Reset, mode, set hours and set minuts buttons\\
+        \hline
+    \end{tabular}
+\end{table}
 

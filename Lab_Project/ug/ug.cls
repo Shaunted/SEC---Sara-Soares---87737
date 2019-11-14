@@ -13,8 +13,12 @@
 \RequirePackage{verbatim}
 \RequirePackage{geometry}
 
+
+%added by students
 \usepackage{float}
 \usepackage{ragged2e}
+{\renewcommand{\arraystretch}{2}%
+
 
 \geometry{
  a4paper,
