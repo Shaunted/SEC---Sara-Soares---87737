@@ -18,6 +18,7 @@
 \usepackage{float}
 \usepackage{ragged2e}
 {\renewcommand{\arraystretch}{2}%
+\usepackage{array}
 
 
 \geometry{
