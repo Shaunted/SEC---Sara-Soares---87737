@@ -1,0 +1,24 @@
+$date
+	Mon Nov 25 14:47:42 2019
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module mc_tb $end
+$var wire 1 ! blb $end
+$var wire 1 " bl $end
+$scope module mc $end
+$var wire 1 " bl $end
+$var wire 1 ! blb $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+z"
+z!
+$end
+#100000
