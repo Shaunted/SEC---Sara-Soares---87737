@@ -1,0 +1,28 @@
+# Button reading program
+# R1 - mask for button0 001 (1)
+# R2 - mask for button1 010 (2)
+# R3 - mask for button2 100 (4)
+
+
+
+
+#load masks
+    
+        ldi 1
+        wrw R1
+        ldi 2
+        wrw R2
+        ldi 4
+        wrw R3
+
+cycle   rdw BUTTON_BASE
+        AND R1
+        bneqi btn
+        rdw BUTTON_BASE
+        AND R2
+        beqi cycle
+
+btn     wrw TRAP_BASE
+        ldi 0
+        beqi cycle
+        nop
