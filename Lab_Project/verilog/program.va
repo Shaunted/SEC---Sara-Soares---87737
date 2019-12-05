@@ -1,6 +1,6 @@
 # Button reading program
-# R1 - mask for button0 001 (1)
-# R2 - mask for button1 010 (2)
+# R1 - mask for button0 001 (1) - Min
+# R2 - mask for button1 010 (2) - Hour
 # R3 - mask for button2 100 (4)
 
 
@@ -17,12 +17,42 @@
 
 cycle   rdw BUTTON_BASE
         AND R1
-        bneqi btn
+        bneqi btn0
         rdw BUTTON_BASE
         AND R2
+        bneqi btn1
+        beqi cycle
+        nope
+
+
+btn0    rdw MINUTES
+        addi 1
+        ldi MINUTES
+        rdw BUTTON_BASE
+        nop
+        nop
+        nop
+        bneqi btn0
+        nop
         beqi cycle
 
-btn     wrw TRAP_BASE
+
+
+
+btn1    rdw HOURS
+        addi 1
+        ldi HOURS
+        rdw BUTTON_BASE
+        nop
+        nop
+        nop
+        bneqi btn1
+        nop
+        beqi cycle
+
+
+end     wrw TRAP_BASE
         ldi 0
+        nop
         beqi cycle
         nop

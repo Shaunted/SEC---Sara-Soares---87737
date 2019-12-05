@@ -1,4 +1,6 @@
 `timescale 1ns / 1ps
+`include "xdefs.vh"
+
 
 // 1 clock = 20ns
 // 1 second = 50000000 clocks
@@ -17,8 +19,6 @@ module timer(
         output [5:0] data_out,
         input  address,
         input write_en
-      //  output reg min,
-      //  output reg hour
 );
 
 reg [25:0] c;
