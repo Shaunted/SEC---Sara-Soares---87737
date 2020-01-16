@@ -1,0 +1,16 @@
+Cd = 400fF
+Cc = 20fF
+VDD = 1.8V
+deltaV = 80mV
+t = 5ps
+precharge = VDD/2 = 0.9V
+
+
+vf = (VDD/2 * (Cd-Cc))/(Cd+Cc) = 0.8V
+
+C = CcCd/(Cc+Cd) = 19fF
+
+t = RCln((VDD/2 - Vf)/(VDD/2 - deltaV - vf))
+R = t/(Cln((VDD/2 - Vf)/(VDD/2 - deltaV - vf)))
+R = 5p/(19fln((0.9-0.8)/(0.9 - 80m - 0.8)))
+R = 163.5 ohm.

@@ -1,0 +1,11 @@
+Da memória para o cache serão sempre transferidos ambos x e y,
+pelo que o numero total de bytes transferidos será a soma do tamanho de ambos.
+
+Inteiros sao 32 bits, ou seja, 4B. Em 8kB conseguem guardar-se 8k/4 = 2k inteiros.
+
+2048 * 4B = 8kB
+Como sao dois vectores, serão 2*8kB = 16kB será os bytes transferidos da memória para a cache.
+
+Da cache para a memoria, como é write-through, sempre que se escreve para a cache, também se escreve
+para a memoria, pelo que, neste caso, serão 8kB, que é o valor total do vector y, visto que o vector
+x nunca é alterado, e como há dirty bit, apenas são guardados valores alterados.

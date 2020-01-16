@@ -74,18 +74,17 @@ always @(posedge clk) begin
 		end    
 	end
 
-    if(write_en) begin
-        if(sel) begin
-            if(address == MIN0)
-            	data_out <= min0;
-			if(address == MIN1)
-            	data_out <= {0,min1};
-			if(address == HOUR0)
-            	data_out <= hour0; 
-			if(address == HOUR1)
-            	data_out <= {0,0,hour1};
-		end
-		if(address == MIN0)
+	if(address == MIN0)
+		data_out <= min0;
+	if(address == MIN1)
+      	data_out <= {0,min1};
+	if(address == HOUR0)
+      	data_out <= hour0; 
+	if(address == HOUR1)
+       	data_out <= {0,0,hour1};
+
+    if(write_en & sel) begin
+        if(address == MIN0)
             min0 <= data_in;
 		if(address == MIN1)
             min1 <= data_in;

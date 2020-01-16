@@ -1,0 +1,22 @@
+Chip de 8MB com 8 bits
+
+8MB = 2**23 Bytes
+8bits = 1B = 2**0 Bytes
+
+
+(2**23)/(2**0) = 2**23 -> 23 bits de endereçamento
+
+Como 23 nao é divisivel por 2, o chip nao pode ser quadrado, pelo que podemos assumir que
+#rows=2**12 e #cols = 2**11, sendo o chip 2048*4096.
+
+O tamanho em bytes das colunas será entao (2**11)*8 = 2**11B = 2kB 
+O tamanho em bytes das linhas será entao (2**12)*8 = 2**12B = 4kB
+
+Como as linhas e colunas podem partilhar os bits de endereçamento, pois primeiro sao enviados os
+bits das rows e depois das colums, o numero de io pins para endereçamento será 12.
+
+
+
+
+
+

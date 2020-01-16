@@ -1,0 +1,8 @@
+row access time = 50p
+refresh interval = 8u
+
+
+Refresh overhead = Refresh duration/Refresh period
+		 = 0.2u/8u = 0.025 = 2.5%
+
+Refresh duration = #rows*trow_access = 2**12 * 50p = 0.2us

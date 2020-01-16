@@ -1,0 +1,10 @@
+index bits = log2(#lines) -> cachesize/linesize*#ways = 8kB/32B*2 = 2**13/2**6 = 2**7
+index bits = 7 bits
+
+offset = 3 bits -> linesize/wordsize = 32B/32b = 2**3
+
+Tag bits = total address bits - offset - index
+	 = log2(512M) - 3 - 7
+	 = 29 - 3 - 7 = 20 bits
+
+
