@@ -1,5 +1,5 @@
 `timescale 1ns / 1ps
-`include "xdefs.vh"
+//`include "xdefs.vh"
 
 
 // 1 clock = 20ns
@@ -13,19 +13,17 @@ module timer(
         output reg [3:0] hour0,
         output reg [2:0] min1,
         output reg [3:0] min0,
-        //cpu interface
+       //cpu interface
         input sel,
-        input [3:0] data_in,
+       /* input [3:0] data_in,
         output [3:0] data_out,
-        input  address,
+        input  address,*/
         input write_en
 );
 
 reg [25:0] c;
-reg [5:0] r;
 reg [5:0] s;
-reg [3:0] m;
-reg [1:0] h;
+
 
 always @(posedge clk) begin
 	if (rst) begin
@@ -37,14 +35,40 @@ always @(posedge clk) begin
 		c <= 0;
 	end 
 	else begin
-		if(c == 50000000 - 1) begin
+		if(c == 50000000 - 1) begin //50000000
 			c <= 0;
 		end
       else begin
 			c <=  c + 1;
       end
 	end
-	if (c == 50000000 - 1) begin
+
+	if(c==50000000-1) begin
+		s <= s + 1;
+		if(s == 59 || sel) begin
+			s<= 0;
+			min0 <= min0 + 1;
+			if(min0==9) begin
+				min0<=0;
+				min1<=min1+1;
+				if(min1==5) begin
+					min1<=0;
+					hour0<=hour0 + 1;
+					if(hour0 == 9) begin
+						hour0 <=0;
+						hour1 <= hour1 + 1;
+						if(hour1==2 && hour0==3) begin
+							hour0<=0;
+							hour1<=0;
+						end
+					end
+				end
+			end
+		end
+	end
+
+/*
+	if (c == 20 - 1) begin //50000000
 		s <= s + 1;
 		if (s == 59) begin
 			s <= 0;
@@ -72,8 +96,8 @@ always @(posedge clk) begin
 				hour1 <= 0;
 			end
 		end    
-	end
-
+	end*/
+/*
 	if(address == MIN0)
 		data_out <= min0;
 	if(address == MIN1)
@@ -93,6 +117,6 @@ always @(posedge clk) begin
 		if(address == HOUR1)
             hour1 <= data_in;
     end
-
+*/
 end
 endmodule

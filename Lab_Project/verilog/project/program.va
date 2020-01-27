@@ -1,0 +1,736 @@
+# VERSAT@lcc (IST: gcrs 2019)
+# R12 = SP; R11 = FP
+	ldi 1
+	wrw R12
+	ldi ADDR_W
+	addi -1
+	wrw RB
+_next	rdw RB
+	beqi _top
+	rdw R12
+	shft -1
+	wrw R12
+	rdw RB
+	addi -1
+	wrw RB
+	ldi 0
+	beqi _next
+_top	rdw R12
+	addi -1
+	addi MEM_BASE
+	wrw R12
+	wrw RB
+	ldi end
+	wrwb
+	ldi 0
+	wrw R11 #FP=0
+	beqi main
+	nop
+end	ldi 0xF
+	and R1
+	addi 0x30
+	wrw CPRT_BASE
+	ldi 0xa
+	wrw CPRT_BASE
+	ldi 1
+	wrw R12
+	ldi ADDR_W
+	wrw RB
+_again	rdw RB
+	beqi _trap
+	rdw R12
+	shft -1
+	wrw R12
+	rdw RB
+	addi -1
+	wrw RB
+	ldi 0
+	beqi _again
+_trap	rdw R12
+	addi -1
+	addi MEM_BASE
+	wrw RB
+	wrwb
+# DATA
+# global houraddr
+houraddr	.memset 770
+# global pushaddr
+pushaddr	.memset 530
+# global delay
+# TEXT
+# delay ncalls=0 nargs=1 used=38
+delay	nop
+# PUSH r3
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	rdw R3
+	wrwb
+# PUSH r4
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	rdw R4
+	wrwb
+# PUSH r5
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	rdw R5
+	wrwb
+# save fp: PUSH fp; MOV fp, sp
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	rdw R11
+	wrwb
+	rdw R12
+	wrw R11
+# delay {begin} framesize=0 nofp=0
+ # ADDRGP1
+	ldi y
+	wrw R5
+ # INDIRI1(fpN)
+	rdw R11
+	addi 5
+	wrw RB
+	rdwb
+	rdwb
+	wrw R4
+ # ASGNI1(addrg,reg)
+	rdw R5
+	wrw RB
+	rdw R4
+	wrwb
+ # LABELV
+L2	nop
+ # LABELV
+L3	nop
+ # ADDRGP1
+	ldi y
+	wrw R5
+## ASGN=1079 ##
+## INDIR=1095 ##
+ # reg: INDIRI1(reg)
+	rdw R5
+	wrw RB
+	rdwb
+	rdwb
+	wrw R4
+## ASGN=1077 ##
+## INDIR=1095 ##
+## INDIR=1093 ##
+ # reg: con
+	ldi 1
+	wrw R3
+ # SUBI1(reg,reg)
+	rdw R4
+	sub R3
+	wrw R3
+ # ASGNI1(addr,reg)
+	rdw R5
+	wrw RB
+	rdw R3
+	wrwb
+## INDIR=1093 ##
+ # reg: con
+	ldi 0
+	wrw R5
+ # NEI1
+	rdw R4
+	sub R5
+	bneqi L2
+	nop
+ # LABELV
+L1	nop
+# delay {end}
+# restore fp: MOV sp, fp; POP fp
+	rdw R11
+	wrw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw R11
+	rdw R12
+	addi 1
+	wrw R12
+# POP r5
+	rdw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+	rdw R12
+	addi 1
+	wrw R12
+# POP r4
+	rdw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw R4
+	rdw R12
+	addi 1
+	wrw R12
+# POP r3
+	rdw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw R3
+	rdw R12
+	addi 1
+	wrw R12
+# RET
+	rdw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw RB
+	rdw R12
+	addi 1
+	wrw R12
+	ldi 0
+	beq RB
+	nop
+
+# global main
+# main ncalls=1 nargs=0 used=7f0
+main	nop
+# PUSH r4
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	rdw R4
+	wrwb
+# PUSH r5
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	rdw R5
+	wrwb
+# PUSH r6
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	rdw R6
+	wrwb
+# PUSH r7
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	rdw R7
+	wrwb
+# PUSH r8
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	rdw R8
+	wrwb
+# PUSH r9
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	rdw R9
+	wrwb
+# PUSH r10
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	rdw R10
+	wrwb
+# save fp: PUSH fp; MOV fp, sp
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	rdw R11
+	wrwb
+	rdw R12
+	wrw R11
+# alloc var space: SUB sp, 1
+	rdw R12
+	addi -1
+	wrw R12
+# main {begin} framesize=1 nofp=0
+ # ADDRGP1
+	ldi houraddr
+	wrw R5
+ # INDIRI1(addrg)
+	rdw R5
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # LOADP1(reg)
+	rdw R5
+	wrw R9
+## ASGN=1079 ##
+ # ADDRGP1
+	ldi houraddr
+	wrw R5
+ # INDIRI1(addrg)
+	rdw R5
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # ADDI1(reg,con)
+	rdw R5
+	addi 1
+	wrw R5
+ # LOADP1(reg)
+	rdw R5
+	wrw R6
+## ASGN=1079 ##
+ # ADDRGP1
+	ldi houraddr
+	wrw R5
+ # INDIRI1(addrg)
+	rdw R5
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # ADDI1(reg,con)
+	rdw R5
+	addi 2
+	wrw R5
+ # LOADP1(reg)
+	rdw R5
+	wrw R7
+## ASGN=1079 ##
+ # ADDRGP1
+	ldi houraddr
+	wrw R5
+ # INDIRI1(addrg)
+	rdw R5
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # ADDI1(reg,con)
+	rdw R5
+	addi 3
+	wrw R5
+ # ASGNP1(fpN,reg)
+	rdw R11
+	addi -1
+	wrw RB
+	rdw R5
+	wrwb
+ # ADDRGP1
+	ldi pushaddr
+	wrw R5
+ # INDIRI1(addrg)
+	rdw R5
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # LOADP1(reg)
+	rdw R5
+	wrw R8
+## ASGN=1079 ##
+ # reg: con
+	ldi 0
+	wrw R10
+## ASGN=1077 ##
+ # JUMPV(addrj)
+	ldi 0
+	beqi L7
+	nop
+ # LABELV
+L6	nop
+## INDIR=1095 ##
+ # reg: INDIRI1(reg)
+	rdw R8
+	wrw RB
+	rdwb
+	rdwb
+	wrw R10
+## ASGN=1077 ##
+## INDIR=1093 ##
+ # reg: con
+	ldi 1
+	wrw R5
+ # NEI1
+	rdw R10
+	sub R5
+	bneqi L9
+	nop
+## INDIR=1095 ##
+ # reg: INDIRI1(reg)
+	rdw R9
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # reg: con
+	ldi 9
+	wrw R4
+ # NEI1
+	rdw R5
+	sub R4
+	bneqi L11
+	nop
+## INDIR=1095 ##
+ # ASGNI1(addr,con)
+	rdw R9
+	wrw RB
+	ldi 0
+	wrwb
+## INDIR=1095 ##
+## INDIR=1095 ##
+ # reg: INDIRI1(reg)
+	rdw R6
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # ADDI1(reg,con)
+	rdw R5
+	addi 1
+	wrw R5
+ # ASGNI1(addr,reg)
+	rdw R6
+	wrw RB
+	rdw R5
+	wrwb
+ # JUMPV(addrj)
+	ldi 0
+	beqi L10
+	nop
+ # LABELV
+L11	nop
+## INDIR=1095 ##
+## INDIR=1095 ##
+ # reg: INDIRI1(reg)
+	rdw R9
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # ADDI1(reg,con)
+	rdw R5
+	addi 1
+	wrw R5
+ # ASGNI1(addr,reg)
+	rdw R9
+	wrw RB
+	rdw R5
+	wrwb
+ # JUMPV(addrj)
+	ldi 0
+	beqi L10
+	nop
+ # LABELV
+L9	nop
+## INDIR=1093 ##
+ # reg: con
+	ldi 2
+	wrw R5
+ # NEI1
+	rdw R10
+	sub R5
+	bneqi L13
+	nop
+ # INDIRP1(fpN)
+	rdw R11
+	addi -1
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # reg: INDIRI1(reg)
+	rdw R5
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # reg: con
+	ldi 2
+	wrw R4
+ # NEI1
+	rdw R5
+	sub R4
+	bneqi L15
+	nop
+## INDIR=1095 ##
+ # reg: INDIRI1(reg)
+	rdw R7
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # reg: con
+	ldi 3
+	wrw R4
+ # NEI1
+	rdw R5
+	sub R4
+	bneqi L17
+	nop
+## INDIR=1095 ##
+ # ASGNI1(addr,con)
+	rdw R7
+	wrw RB
+	ldi 0
+	wrwb
+ # INDIRP1(fpN)
+	rdw R11
+	addi -1
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # ASGNI1(addr,con)
+	rdw R5
+	wrw RB
+	ldi 0
+	wrwb
+ # JUMPV(addrj)
+	ldi 0
+	beqi L16
+	nop
+ # LABELV
+L17	nop
+## INDIR=1095 ##
+## INDIR=1095 ##
+ # reg: INDIRI1(reg)
+	rdw R7
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # ADDI1(reg,con)
+	rdw R5
+	addi 1
+	wrw R5
+ # ASGNI1(addr,reg)
+	rdw R7
+	wrw RB
+	rdw R5
+	wrwb
+ # JUMPV(addrj)
+	ldi 0
+	beqi L16
+	nop
+ # LABELV
+L15	nop
+## INDIR=1095 ##
+ # reg: INDIRI1(reg)
+	rdw R7
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # reg: con
+	ldi 9
+	wrw R4
+ # NEI1
+	rdw R5
+	sub R4
+	bneqi L19
+	nop
+## INDIR=1095 ##
+ # ASGNI1(addr,con)
+	rdw R7
+	wrw RB
+	ldi 0
+	wrwb
+ # INDIRP1(fpN)
+	rdw R11
+	addi -1
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+## ASGN=1079 ##
+## INDIR=1095 ##
+## INDIR=1095 ##
+ # reg: INDIRI1(reg)
+	rdw R5
+	wrw RB
+	rdwb
+	rdwb
+	wrw R4
+ # ADDI1(reg,con)
+	rdw R4
+	addi 1
+	wrw R4
+ # ASGNI1(addr,reg)
+	rdw R5
+	wrw RB
+	rdw R4
+	wrwb
+ # JUMPV(addrj)
+	ldi 0
+	beqi L20
+	nop
+ # LABELV
+L19	nop
+## INDIR=1095 ##
+## INDIR=1095 ##
+ # reg: INDIRI1(reg)
+	rdw R7
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+ # ADDI1(reg,con)
+	rdw R5
+	addi 1
+	wrw R5
+ # ASGNI1(addr,reg)
+	rdw R7
+	wrw RB
+	rdw R5
+	wrwb
+ # LABELV
+L20	nop
+ # LABELV
+L16	nop
+ # LABELV
+L13	nop
+ # LABELV
+L10	nop
+ # ARGI1(con)
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	ldi 32768
+	wrwb
+# CALL
+	rdw R12
+	addi -1
+	wrw R12
+	wrw RB
+	ldi L24
+	wrwb
+	ldi 0
+	beqi delay
+L24	nop
+	rdw R12
+	addi 1
+	wrw R12
+ # LABELV
+L7	nop
+ # JUMPV(addrj)
+	ldi 0
+	beqi L6
+	nop
+ # LABELV
+L21	nop
+ # LABELV
+L22	nop
+ # JUMPV(addrj)
+	ldi 0
+	beqi L21
+	nop
+ # LABELV
+L5	nop
+# main {end}
+# restore fp: MOV sp, fp; POP fp
+	rdw R11
+	wrw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw R11
+	rdw R12
+	addi 1
+	wrw R12
+# POP r10
+	rdw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw R10
+	rdw R12
+	addi 1
+	wrw R12
+# POP r9
+	rdw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw R9
+	rdw R12
+	addi 1
+	wrw R12
+# POP r8
+	rdw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw R8
+	rdw R12
+	addi 1
+	wrw R12
+# POP r7
+	rdw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw R7
+	rdw R12
+	addi 1
+	wrw R12
+# POP r6
+	rdw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw R6
+	rdw R12
+	addi 1
+	wrw R12
+# POP r5
+	rdw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw R5
+	rdw R12
+	addi 1
+	wrw R12
+# POP r4
+	rdw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw R4
+	rdw R12
+	addi 1
+	wrw R12
+# RET
+	rdw R12
+	wrw RB
+	rdwb
+	rdwb
+	wrw RB
+	rdw R12
+	addi 1
+	wrw R12
+	ldi 0
+	beq RB
+	nop
+
+# BSS
+# global y
+y	.memset 0x00
+_end	.memset 0
+### The end ###

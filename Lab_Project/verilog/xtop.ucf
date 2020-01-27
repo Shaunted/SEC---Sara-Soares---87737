@@ -1,0 +1,45 @@
+NET "clk" TNM_NET = "clk";
+TIMESPEC "TS_clkin" = PERIOD "clk" 20 ns HIGH 50 %;
+NET "clk"  LOC = "B8";
+NET "rst"  LOC = "G12";
+
+# LED
+#NET "led<0>"  LOC = "M5";
+
+# Pin assignment for SWs
+#NET "sw<7>" LOC = "N3";  # Bank = 2, Signal name = SW7
+#NET "sw<6>" LOC = "E2";  # Bank = 3, Signal name = SW6
+#NET "sw<5>" LOC = "F3";  # Bank = 3, Signal name = SW5
+#NET "sw<4>" LOC = "G3";  # Bank = 3, Signal name = SW4
+#NET "sw<3>" LOC = "B4";  # Bank = 3, Signal name = SW3
+#NET "sw<2>" LOC = "K3";  # Bank = 3, Signal name = SW2
+#NET "sw<1>" LOC = "L3";  # Bank = 3, Signal name = SW1
+#NET "sw<0>" LOC = "P11"; # Bank = 2, Signal name = SW0
+
+
+# 7 segment display
+
+# Anodes
+NET "disp_sel<0>" LOC = "K14";
+NET "disp_sel<1>" LOC = "M13"; 
+NET "disp_sel<2>" LOC = "J12";
+NET "disp_sel<3>" LOC = "F12";
+
+#Cathodes
+NET "display_num<0>" LOC = "L14"; 
+NET "display_num<1>" LOC = "H12";
+NET "display_num<2>" LOC = "N14";
+NET "display_num<3>" LOC = "N11";
+NET "display_num<4>" LOC = "P12"; 
+NET "display_num<5>" LOC = "L13";
+NET "display_num<6>" LOC = "M12";
+
+#Display Point
+NET "disp_dot" LOC = "N13";
+
+# Pin assignment for BUTTONs
+NET "button<0>" LOC = "C11";
+NET "button<1>" LOC = "M4";
+#NET "button<2>" LOC = "A7";
+
+
